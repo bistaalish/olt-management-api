@@ -1,2 +1,3 @@
 .venv/
+reseller/__pycache__/
 flink.db
