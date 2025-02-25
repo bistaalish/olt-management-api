@@ -1,3 +1,4 @@
 .venv/
-reseller/__pycache__/
+app/__pycache__/
 flink.db
+app/routes/__pycache__/
