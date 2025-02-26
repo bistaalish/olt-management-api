@@ -1,10 +1,11 @@
 from fastapi import FastAPI, Depends, status, Response, HTTPException
 from . import schemas, models, hashing
-from typing import List
+# from typing import List
 from .database import engine,get_db,SessionLocal
-from sqlalchemy.orm import Session
-from .hashing import Hash
+# from sqlalchemy.orm import Session
+# from .hashing import Hash
 from .routers import reseller,user
+import uvicorn
 app = FastAPI()
 
 models.Base.metadata.create_all(engine)
@@ -16,4 +17,3 @@ app.include_router(reseller.router)
 app.include_router(user.router)
 
 '''User Routes'''
-
