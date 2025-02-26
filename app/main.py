@@ -4,16 +4,19 @@ from . import schemas, models, hashing
 from .database import engine,get_db,SessionLocal
 # from sqlalchemy.orm import Session
 # from .hashing import Hash
-from .routers import reseller,user
+from .routers import reseller,user,auth,device
 import uvicorn
 app = FastAPI()
 
 models.Base.metadata.create_all(engine)
 
+# Include the auth router
+app.include_router(auth.router)
 # Include the reseller router
 app.include_router(reseller.router)
 
 #Include the user router
 app.include_router(user.router)
 
-'''User Routes'''
+# Include the device router
+app.include_router(device.router)

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional 
 
 class UserBase(BaseModel):
     name: str
@@ -71,3 +71,40 @@ class ShowDevice(BaseModel):
     ip: str
     username: str
 
+class Login(BaseModel):
+    username: str
+    password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+
+class DeviceBase(BaseModel):
+    name: str
+    vendor: str
+    model: str
+    type: str
+    ip: str
+    username: str
+    password: str
+    reseller_id: int
+
+    class Config():
+        orm_mode = True
+
+class Device(DeviceBase):
+    name: str
+    vendor: str
+    model: str
+    type: str
+    ip: str
+    username: str
+    password: str
+    reseller: List [ResellerBase] = []
+
+    class Config():
+        orm_mode = True
