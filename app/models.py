@@ -39,6 +39,7 @@ class Device(Base):
     
 class ServiceProfile(Base):
     __tablename__ = "services"
+    
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     serviceprofile_id = Column(String)

@@ -96,7 +96,7 @@ class DeviceBase(BaseModel):
     class Config():
         orm_mode = True
 
-class Device(DeviceBase):
+class Device(BaseModel):
     name: str
     vendor: str
     model: str
@@ -104,7 +104,28 @@ class Device(DeviceBase):
     ip: str
     username: str
     password: str
-    reseller: List [ResellerBase] = []
+    reseller: ShowUserReseller
 
     class Config():
         orm_mode = True
+
+class DeviceService(BaseModel):
+    id: int
+    name: str
+
+
+class ServiceProfile(BaseModel):
+    name: str
+    serviceprofile_id: str
+    lineprofile_id: str
+    gemport: str
+    vlan: str
+    device_id: int
+
+class ShowServiceProfile(BaseModel):
+    name: str
+    serviceprofile_id: str
+    lineprofile_id: str
+    gemport: str
+    vlan: str
+    device: DeviceService

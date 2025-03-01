@@ -10,7 +10,7 @@ router = APIRouter(
 )
 
 # GET /device
-@router.get("/", status_code=status.HTTP_200_OK,response_model=List[schemas.DeviceBase])
+@router.get("/", status_code=status.HTTP_200_OK,response_model=List[schemas.Device])
 def get_devices(db: Session = Depends(get_db)):
     return device.getAll(db)
 
@@ -23,7 +23,7 @@ def create(request: schemas.DeviceBase,db: Session= Depends(get_db)):
 
 
 # GET /device/{id}
-@router.get("/{id}", status_code=status.HTTP_200_OK,response_model=schemas.DeviceBase)
+@router.get("/{id}", status_code=status.HTTP_200_OK,response_model=schemas.Device)
 def get_device(id:int, db: Session = Depends(get_db)):
     return device.getDevice(id,db)
 
