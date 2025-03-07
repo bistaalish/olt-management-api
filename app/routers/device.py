@@ -38,3 +38,12 @@ def update(id:int,request: schemas.DeviceBase, db: Session = Depends(get_db)):
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete(id:int, db: Session = Depends(get_db)):
     return device.deleteDevice(id,db)
+
+
+@router.get("/{id}/onu/autofind", status_code=status.HTTP_302_FOUND)
+def findONU(id:int,db: Session = Depends(get_db)):
+    return device.findONU(id, db)
+
+@router.post('/{id}/onu/search',status_code=status.HTTP_302_FOUND)
+def search(id,request:schemas.ONUSearch,db: Session = Depends(get_db)):
+    pass

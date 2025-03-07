@@ -43,13 +43,4 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
 @router.put("/{user_id}", status_code=status.HTTP_202_ACCEPTED,tags=["Users"])
 def update_user(user_id: int, request: schemas.UserBase, db: Session = Depends(get_db)):
     return user.updateUser(user_id,request,db)
-    # user = db.query(models.User).filter(models.User.id == user_id).first()
-    # if not user:
-    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {user_id} not found")
-    # user.name = request.name
-    # user.email = request.email
-    # user.password = Hash.bcrypt(request.password)
-    # user.reseller_id = request.reseller_id
-    # db.commit()
-    # db.refresh(user)
-    # return "updated"
+

@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Depends
 from .. import models,schemas
 from ..hashing import Hash
+from ..utils import Huawei
 
 def getAll(db:Session):
     devices = db.query(models.Device).all()
@@ -47,3 +48,17 @@ def updateDevice(device_id: int, request: schemas.Device, db: Session):
     db.commit()
     db.refresh(device)
     return device
+
+def findONU(id: int,db:Session):
+    device = db.query(models.Device).filter(models.Device.id == id).first()
+    if not device:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Device with id {id} not found")
+    if device.vendor == "Huawei":
+        tn = Huawei.TelnetSession(device)
+        autofindResults = Huawei.autofind(tn)
+        tn.close()
+        # print(autofindResults["status"])
+        if autofindResults["status"] == "failed":
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No ONU Found on Autofind")
+    return autofindResults['devices']
+    

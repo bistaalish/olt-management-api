@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator, ValidationError
 from typing import List, Optional 
 
 class UserBase(BaseModel):
@@ -123,9 +123,14 @@ class ServiceProfile(BaseModel):
     device_id: int
 
 class ShowServiceProfile(BaseModel):
+    id: int
     name: str
     serviceprofile_id: str
     lineprofile_id: str
     gemport: str
     vlan: str
     device: DeviceService
+
+class ONUSearch(BaseModel):
+    sn: Optional[str] = None
+    description: Optional[str] = None
