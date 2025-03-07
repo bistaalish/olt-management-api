@@ -51,4 +51,7 @@ def search(id,request:schemas.ONUSearchSN,db: Session = Depends(get_db)):
 @router.delete("/{id}/onu/delete",status_code=status.HTTP_200_OK)
 def deleteONU(id,request:schemas.ONUSearchSN,db:Session = Depends(get_db)):
     return device.deleteONU(id,request,db)
-    
+
+@router.post("/{id}/onu/add",status_code=status.HTTP_200_OK)
+def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db)):
+    return device.addONU(id,request,db)

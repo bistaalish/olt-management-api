@@ -148,3 +148,11 @@ class ONUSearchSNOutput(BaseModel):
     VendorSN: str
     Description: str
     LineProfile: str
+
+class AddONU(BaseModel):
+    sn : str
+    FSP: str
+    interface: str
+    port: str
+    service_id: int
+    description: str

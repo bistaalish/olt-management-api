@@ -81,4 +81,22 @@ def deleteONU(id,request:schemas.ONUSearchSN,db:Session):
         print(DeleteOutput['error'])
         raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=DeleteOutput['error'])
     # print(DeleteOutput)
-    return request.sn
+    return "deleted"
+
+def addONU(id,request: schemas.AddONU,db:Session):
+    device = db.query(models.Device).filter(models.Device.id == id).first()
+    service = db.query(models.ServiceProfile).filter(models.ServiceProfile.id == request.service_id).first()
+    data = {
+        "sn" : request.sn,
+        "FSP" : request.FSP,
+        "interface" : request.interface,
+        "port" : request.port,
+        "vlan" : service.vlan,
+        "description" : request.description,
+        "gemport"  : service.gemport,
+        "serviceProfileId" : service.serviceprofile_id,
+        "lineProfileId" : service.lineprofile_id
+    }
+    tn = Huawei.TelnetSession(device)
+    AddOuput = Huawei.AddONU(tn,data)
+    return "Added"

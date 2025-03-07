@@ -154,21 +154,52 @@ def deleteONU(tn,data):
         deleteCMD = "ont delete " + port + " " + data['ONTID'] + "\n"
         print(interfaceCMD)
         print(deleteCMD)
-        time.sleep(1)
+        # time.sleep(1)
         tn.write(interfaceCMD.encode('ascii'))
-        time.sleep(1)
+        # time.sleep(1)
         tn.write(deleteCMD.encode('ascii'))
         tn.write(b"quit\n")
-        time.sleep(1)
-        output = tn.read_until(b"config)#").decode()
+        output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
         print(output)
         if "Failure: This configured object has some service virtual ports" in output:
            raise Exception("Virtual Port Not deleted")
-        return {
-           "status" : "success"
-        }
+        if " Number of ONTs that can be deleted: 1, success: 1" in output:
+            return {
+            "status" : "success"
+            }
    except Exception as e:
         print(f"Error while capturing ONT information: {str(e)}")
+        return {
+            "status": "failed",
+            "error" : str(e)
+        }
+   
+def AddONU(tn,data):
+    try:
+        interfaceCMD = "interface gpon " + data['interface'] + "\n"
+        AddCMD = "ont add " + data['port'] +  " sn-auth " + data ['sn'] + " omci ont-lineprofile-id " + data['lineProfileId'] +" ont-srvprofile-id "+ data['serviceProfileId'] + " desc " + data['description'] +"\n"
+        
+        tn.write(interfaceCMD.encode('ascii'))
+        tn.write(AddCMD.encode('ascii'))
+        tn.write(b"/n/n")
+        output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
+        time.sleep(2)
+        if "Failure: SN already exists" in output:
+            raise Exception("SN not added, SN already Exists")
+        match = re.search(r"ONTID\s*:(\d+)", output)
+        ontid = match.group(1)
+        AddServicePortCMD = "service-port vlan " + data['vlan'] + " gpon " + data['FSP'] + " ont " + ontid + " gemport " + data['gemport'] + " multi-service user-vlan " + data['vlan'] + " tag-transform translate\n"
+        quitCMD = "quit \n"
+        tn.write(b"\n")
+        tn.write(quitCMD.encode('ascii'))
+        tn.write(AddServicePortCMD.encode('ascii'))
+        tn.write(b'\n')
+        output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
+        print(output)
+        return {
+            "status" : "success"
+        }
+    except Exception as e:
         return {
             "status": "failed",
             "error" : str(e)
