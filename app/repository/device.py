@@ -56,9 +56,29 @@ def findONU(id: int,db:Session):
     if device.vendor == "Huawei":
         tn = Huawei.TelnetSession(device)
         autofindResults = Huawei.autofind(tn)
-        tn.close()
-        # print(autofindResults["status"])
+        print(autofindResults["status"])
         if autofindResults["status"] == "failed":
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No ONU Found on Autofind")
     return autofindResults['devices']
+
+def SearchONU(id,request:schemas.ONUSearchSN,db: Session):
+    device = db.query(models.Device).filter(models.Device.id == id).first()
+    tn = Huawei.TelnetSession(device)
+    SearchOutput = Huawei.SearchBySN(request.sn,tn)
+    if (SearchOutput['status'] == "failed"):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{request.sn} not Found in Provided OLT")
+    return SearchOutput["device"]
     
+
+def deleteONU(id,request:schemas.ONUSearchSN,db:Session):
+    device = db.query(models.Device).filter(models.Device.id == id).first()
+    tn = Huawei.TelnetSession(device)
+    SearchOutput = Huawei.SearchBySN(request.sn,tn)
+    if (SearchOutput['status'] == "failed"):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{request.sn} not Found in Provided OLT")
+    DeleteOutput = Huawei.deleteONU(tn,SearchOutput['device'])
+    if DeleteOutput['status'] == 'failed':
+        print(DeleteOutput['error'])
+        raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=DeleteOutput['error'])
+    # print(DeleteOutput)
+    return request.sn

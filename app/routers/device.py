@@ -40,10 +40,15 @@ def delete(id:int, db: Session = Depends(get_db)):
     return device.deleteDevice(id,db)
 
 
-@router.get("/{id}/onu/autofind", status_code=status.HTTP_302_FOUND)
+@router.get("/{id}/onu/autofind", status_code=status.HTTP_302_FOUND,response_model=List[schemas.Autofind])
 def findONU(id:int,db: Session = Depends(get_db)):
     return device.findONU(id, db)
 
-@router.post('/{id}/onu/search',status_code=status.HTTP_302_FOUND)
-def search(id,request:schemas.ONUSearch,db: Session = Depends(get_db)):
-    pass
+@router.post('/{id}/onu/search/sn',status_code=status.HTTP_200_OK,response_model=schemas.ONUSearchSNOutput)
+def search(id,request:schemas.ONUSearchSN,db: Session = Depends(get_db)):
+    return device.SearchONU(id,request,db)
+
+@router.delete("/{id}/onu/delete",status_code=status.HTTP_200_OK)
+def deleteONU(id,request:schemas.ONUSearchSN,db:Session = Depends(get_db)):
+    return device.deleteONU(id,request,db)
+    

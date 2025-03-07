@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator, ValidationError
+from pydantic import BaseModel, field_validator, ValidationError,Field
 from typing import List, Optional 
 
 class UserBase(BaseModel):
@@ -131,6 +131,20 @@ class ShowServiceProfile(BaseModel):
     vlan: str
     device: DeviceService
 
-class ONUSearch(BaseModel):
-    sn: Optional[str] = None
-    description: Optional[str] = None
+class Autofind(BaseModel):
+    SN: str
+    FSP: str
+    interface: str
+    port: str
+
+class ONUSearchSN(BaseModel):
+    sn: str = Field(..., min_length=16, max_length=16)
+
+
+class ONUSearchSNOutput(BaseModel):
+    FSP: str
+    ONTID: str
+    sn: str
+    VendorSN: str
+    Description: str
+    LineProfile: str
