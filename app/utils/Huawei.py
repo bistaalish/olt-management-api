@@ -183,7 +183,6 @@ def AddONU(tn,data):
         tn.write(AddCMD.encode('ascii'))
         tn.write(b"/n/n")
         output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
-        time.sleep(2)
         if "Failure: SN already exists" in output:
             raise Exception("SN not added, SN already Exists")
         match = re.search(r"ONTID\s*:(\d+)", output)

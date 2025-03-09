@@ -10,6 +10,14 @@ def getAll(db:Session):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No devices found")
     return devices
 
+def getDeviceByResellerId(db:Session,id:int):
+    print(id)
+    devices = db.query(models.Device).filter(models.Device.reseller_id == id)
+    if not devices:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No devices found")
+    return devices
+
+
 def create(request: schemas.Device, db: Session):
     device = db.query(models.Device).filter(models.Device.ip == request.ip).first()
     if device:

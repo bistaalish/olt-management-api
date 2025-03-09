@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, status, Response, HTTPException
 from typing import List
-from .. import schemas, models
+from .. import schemas, models,oauth2
 from ..database import SessionLocal, get_db
 from sqlalchemy.orm import Session
 from ..repository import device
+
 router = APIRouter(
     tags=["Devices"],
     prefix = "/device"
@@ -11,8 +12,10 @@ router = APIRouter(
 
 # GET /device
 @router.get("/", status_code=status.HTTP_200_OK,response_model=List[schemas.Device])
-def get_devices(db: Session = Depends(get_db)):
-    return device.getAll(db)
+def get_devices(db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+    if get_current_user.reseller_id == 1:
+        return device.getAll(db)
+    return device.getDeviceByResellerId(db,get_current_user.reseller_id)
 
 
 # POST /device

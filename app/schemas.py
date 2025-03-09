@@ -72,7 +72,7 @@ class ShowDevice(BaseModel):
     username: str
 
 class Login(BaseModel):
-    username: str
+    email: str
     password: str
 
 
@@ -82,6 +82,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
+    reseller_id: Optional[int] = None  
 
 class DeviceBase(BaseModel):
     name: str
