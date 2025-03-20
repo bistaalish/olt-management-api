@@ -12,6 +12,11 @@ def getAll(db: Session):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No users found")
     return users
     
+def getUserByReseller(reseller_id: int,db: Session):
+    users = db.query(models.User).filter(models.User.reseller_id == reseller_id)
+    if not users:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No users found for reseller with id {reseller_id}")
+    return users
 def create(request: schemas.User,db: Session):
     user = db.query(models.User).filter(models.User.email == request.email).first()
     if user:

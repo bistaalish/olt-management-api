@@ -11,6 +11,13 @@ def getAll(db: Session):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No resellers found")
     return resellers
 
+def getResellerMe(reseller_id:int,db: Session):
+    print(reseller_id)
+    reseller = db.query(models.Reseller).filter(models.Reseller.id == reseller_id).first()
+    if not reseller:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Reseller with id {reseller_id} not found")
+    return reseller
+
 def create(request: schemas.Reseller,db: Session):
     reseller = db.query(models.Reseller).filter(models.Reseller.name == request.name).first()
     if reseller:

@@ -20,9 +20,11 @@ def get_devices(db: Session = Depends(get_db),get_current_user:schemas.Device = 
 
 # POST /device
 @router.post("/",status_code=status.HTTP_201_CREATED,response_model=schemas.DeviceBase)
-def create(request: schemas.DeviceBase,db: Session= Depends(get_db)):
+def create(request: schemas.DeviceBase,db: Session= Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
     # Create a new Device
-    return device.create(request,db)
+    if get_current_user.reseller_id == 1:
+        return device.create(request,db)
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 
 # GET /device/{id}
@@ -33,14 +35,17 @@ def get_device(id:int, db: Session = Depends(get_db)):
 
 # PUT /device/{id}
 @router.put("/{id}", status_code=status.HTTP_202_ACCEPTED)
-def update(id:int,request: schemas.DeviceBase, db: Session = Depends(get_db)):
-    return device.updateDevice(id,request,db)
-
+def update(id:int,request: schemas.DeviceBase, db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+    if get_current_user.reseller_id == 1:
+        return device.updateDevice(id,request,db)
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 # DELETE /device/{id}
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete(id:int, db: Session = Depends(get_db)):
-    return device.deleteDevice(id,db)
+def delete(id:int, db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+    if get_current_user.reseller_id == 1:
+        return device.deleteDevice(id,db)
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 
 @router.get("/{id}/onu/autofind", status_code=status.HTTP_302_FOUND,response_model=List[schemas.Autofind])

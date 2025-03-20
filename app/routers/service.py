@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, Response, HTTPException
 from typing import List
-from .. import schemas, models
+from .. import schemas, models,oauth2
 from ..database import SessionLocal, get_db
 from sqlalchemy.orm import Session
 from ..repository import service
@@ -12,14 +12,17 @@ router = APIRouter(
 
 # GET /service
 @router.get("/",status_code=status.HTTP_200_OK,response_model=List[schemas.ShowServiceProfile])
-def get_services(db: Session = Depends(get_db)):
-    return service.getAll(db)
+def get_services(db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+    if get_current_user.reseller_id == 1:
+        return service.getAll(db)
+    # return service.getServiceByResellerId(db,get_current_user.reseller_id)
 
 
 
 @router.post("/",status_code=status.HTTP_201_CREATED,response_model=schemas.ShowServiceProfile)
-def create(request: schemas.ServiceProfile, db: Session=Depends(get_db)):
-    return service.create(request,db)
+def create(request: schemas.ServiceProfile, db: Session=Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+    if get_current_user.reseller_id == 1:
+        return service.create(request,db)
 
 
 

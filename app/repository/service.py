@@ -9,6 +9,7 @@ def getAll(db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No Services found")
     return services
 
+    
 def create(request: schemas.ServiceProfile, db: Session = Depends(get_db)):
     service = db.query(models.ServiceProfile).filter(models.ServiceProfile.vlan == request.vlan).first()
     if service:
