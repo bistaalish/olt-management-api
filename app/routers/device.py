@@ -3,7 +3,7 @@ from typing import List
 from .. import schemas, models,oauth2
 from ..database import SessionLocal, get_db
 from sqlalchemy.orm import Session
-from ..repository import device
+from ..repository import device,service
 
 router = APIRouter(
     tags=["Devices"],
@@ -29,8 +29,13 @@ def create(request: schemas.DeviceBase,db: Session= Depends(get_db),get_current_
 
 # GET /device/{id}
 @router.get("/{id}", status_code=status.HTTP_200_OK,response_model=schemas.Device)
-def get_device(id:int, db: Session = Depends(get_db)):
-    return device.getDevice(id,db)
+def get_device(id:int, db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+    DeviceOutput = device.getDevice(id,db)
+    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+        return DeviceOutput
+    if get_current_user.reseller_id == 1:
+        return DeviceOutput
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 
 # PUT /device/{id}
@@ -47,19 +52,47 @@ def delete(id:int, db: Session = Depends(get_db),get_current_user:schemas.Device
         return device.deleteDevice(id,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
+@router.get("/{id}/services",status_code=status.HTTP_200_OK,response_model=List[schemas.ShowServiceProfile])
+def getServicesByDevice(id: int, db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+    DeviceOutput = device.getDevice(id,db)
+    if get_current_user.reseller_id == 1:
+        return service.getServicesByDevice(id,db)
+    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+        return service.getServicesByDevice(id,db)
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 @router.get("/{id}/onu/autofind", status_code=status.HTTP_302_FOUND,response_model=List[schemas.Autofind])
-def findONU(id:int,db: Session = Depends(get_db)):
-    return device.findONU(id, db)
+def findONU(id:int,db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+    DeviceOutput = device.getDevice(id,db)
+    if get_current_user.reseller_id == 1:
+        return device.findONU(id, db)
+    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+        return device.findONU(id, db)
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 @router.post('/{id}/onu/search/sn',status_code=status.HTTP_200_OK,response_model=schemas.ONUSearchSNOutput)
-def search(id,request:schemas.ONUSearchSN,db: Session = Depends(get_db)):
-    return device.SearchONU(id,request,db)
+def search(id,request:schemas.ONUSearchSN,db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+    DeviceOutput = device.getDevice(id,db)
+    if get_current_user.reseller_id == 1:
+        return device.SearchONU(id,request,db)
+    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+        return device.SearchONU(id,request,db)
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 @router.delete("/{id}/onu/delete",status_code=status.HTTP_200_OK)
-def deleteONU(id,request:schemas.ONUSearchSN,db:Session = Depends(get_db)):
-    return device.deleteONU(id,request,db)
+def deleteONU(id,request:schemas.ONUSearchSN,db:Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+    DeviceOutput = device.getDevice(id,db)
+    if get_current_user.reseller_id == 1:
+        return device.deleteONU(id,request,db)
+    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+        return device.deleteONU(id,request,db)
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 @router.post("/{id}/onu/add",status_code=status.HTTP_200_OK)
-def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db)):
-    return device.addONU(id,request,db)
+def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+    DeviceOutput = device.getDevice(id,db)
+    if get_current_user.reseller_id == 1:
+        return device.addONU(id,request,db)
+    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+        return device.addONU(id,request,db)
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)

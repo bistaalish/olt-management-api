@@ -48,3 +48,9 @@ def deleteService(id: int, db: Session = Depends(get_db)):
     db.refresh(service)
     db.commit()
     return "deleted"
+
+def getServicesByDevice(device_id: int, db: Session = Depends(get_db)):
+    services = db.query(models.ServiceProfile).filter(models.ServiceProfile.device_id == device_id).all()
+    if not services:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No services found for device with id {device_id}")
+    return services
