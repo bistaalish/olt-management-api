@@ -27,6 +27,26 @@ def create(request: schemas.User,db: Session):
     db.refresh(new_user)
     return new_user
 
+def resetPassword(user_id:int, request: schemas.ResetPassword,db: Session,):
+    if request.password != request.confirm_password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match")
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {user_id} not found")
+    user.password = Hash.bcrypt(request.password)
+    db.commit()
+    db.refresh(user)
+    return user
+
+def changePassword(User, request:schemas.ChangePassword, db:Session):
+    print(User.password)
+    if not Hash.verify(User.password,request.current_password):
+        raise HTTPException(status_code=401, detail="Invalid current password")
+    User.password = Hash.bcrypt(request.new_password)
+    db.commit()
+    db.refresh(User)
+    return User
+
 def getUser(user_id: int, db: Session):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
@@ -53,3 +73,4 @@ def updateUser(user_id: int, request: schemas.User, db: Session):
     db.commit()
     db.refresh(user)
     return "updated"
+

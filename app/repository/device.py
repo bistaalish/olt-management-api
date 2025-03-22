@@ -107,4 +107,5 @@ def addONU(id,request: schemas.AddONU,db:Session):
     }
     tn = Huawei.TelnetSession(device)
     AddOuput = Huawei.AddONU(tn,data)
+    print(AddOuput)
     return "Added"

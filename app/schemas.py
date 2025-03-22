@@ -157,3 +157,12 @@ class AddONU(BaseModel):
     port: str
     service_id: int
     description: str
+
+class ResetPassword(BaseModel):
+    password: str
+    confirm_password: str
+
+class ChangePassword(BaseModel):
+    current_password: str
+    new_password: str
+    confirm_new_password: str
