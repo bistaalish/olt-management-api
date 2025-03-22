@@ -203,3 +203,72 @@ def AddONU(tn,data):
             "status": "failed",
             "error" : str(e)
         }
+    
+def searchByDesc(desc,tn):
+    try:
+        command = "display ont info by-desc " + desc
+        tn.write(command.encode('ascii') + b'\n')
+        output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
+        # print(output)
+        while True:
+            # Read the output from the command
+            chunk = tn.read_until(b"---- More ( Press 'Q' to break ) ----", timeout=10).decode('ascii')
+            output += chunk
+            if "---- More ( Press 'Q' to break ) ----" in chunk:
+                # If the pagination prompt is found, send newlines to get more output
+                tn.write(b"\n")
+            else:
+                # Break the loop if no pagination prompt is found
+                break
+        pattern = r'\b\d+/\s*\d+/\d+\s+\d+\s+\w+\s+\w+\s+\w+\s+\w+\s+\w+\b'
+        pattern1 = r'\b\d+/\s*\d+/\s*\d+\b\s+\d+\s+(\b\w+\b)'
+        fsps_set = re.findall(pattern, output)
+        uset_set_unfiltered = re.findall(pattern1, output)
+        fsps_set = re.findall(pattern, output)
+        users = []
+        uset_set_unfiltered = re.findall(pattern1, output)
+        for user_filter in uset_set_unfiltered:
+            if "_" in user_filter:
+                users.append(user_filter)
+        count = 0
+        infos = []
+        for fsp_details in fsps_set:
+            fsp_details_list = fsp_details.split("  ")
+            fsp = fsp_details_list[0].replace(" ","")
+            ont = fsp_details_list[1]
+            sn = fsp_details_list[2]
+            status = fsp_details_list[6]
+            if ont == "":
+                ont = fsp_details_list[2]
+                sn = fsp_details_list[3]
+                status = fsp_details_list[7]
+            desc_output = users[count]
+            fsp_split = fsp.split("/")
+            fs = fsp_split[0] +"/"+fsp_split[1]
+            p = fsp_split[2]
+            fsp_sep = fsp_split[0] +" "+fsp_split[1] +" "+fsp_split[2]
+            customerInfo = {
+                "fsp": fsp,
+                "desc": desc_output,
+                "ontid": ont,
+                "sn": sn,
+                'p': p,
+                "fsp_sep" : fsp_sep,
+                'state' : status
+                }
+            infos.append(customerInfo)
+            print(customerInfo)
+            count = count + 1
+        # print(infos)
+        # print("-"*50)
+        return {
+            "status" : "success",
+            "device" : infos
+        }
+    except Exception as e:
+        print(e)
+        # writeLog("Error:\n")
+        # writeLog(output)
+        return {
+            "status" : "failed"
+        }

@@ -77,6 +77,13 @@ def SearchONU(id,request:schemas.ONUSearchSN,db: Session):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{request.sn} not Found in Provided OLT")
     return SearchOutput["device"]
     
+def SearchONUByDesc(id:int,request,db:Session):
+    device = db.query(models.Device).filter(models.Device.id == id).first()
+    tn = Huawei.TelnetSession(device)
+    SearchOutput = Huawei.searchByDesc(request.description,tn)
+    if (SearchOutput['status'] == "failed"):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{request.desc} not Found in Provided OLT")
+    return SearchOutput["device"]
 
 def deleteONU(id,request:schemas.ONUSearchSN,db:Session):
     device = db.query(models.Device).filter(models.Device.id == id).first()
