@@ -143,11 +143,11 @@ class ONUSearchSN(BaseModel):
 
 
 class ONUSearchSNOutput(BaseModel):
-    FSP: str
-    ONTID: str
-    sn: str
-    VendorSN: str
     Description: str
+    FSP: str
+    sn: str
+    ONTID: str
+    VendorSN: str
     LineProfile: str
 
 class AddONU(BaseModel):
