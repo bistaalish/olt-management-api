@@ -39,8 +39,8 @@ Rust-based cryptography libraries are also used, with configurations specified i
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/bistaalish/olt-management-api.git
+   cd olt-management-api
 
 2. **Install Python dependencies:**:
 ```bash
