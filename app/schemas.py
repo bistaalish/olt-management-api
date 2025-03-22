@@ -169,3 +169,13 @@ class ChangePassword(BaseModel):
 
 class SearchByDescription(BaseModel):
     description: str
+
+class SerachByDescriptionOuts(BaseModel):
+    Description: str
+    SN: str
+    FSP: str
+    ONTID: str
+    P: str
+    Interface: str
+    state: str
+

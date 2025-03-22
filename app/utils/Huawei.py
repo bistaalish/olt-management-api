@@ -248,12 +248,12 @@ def searchByDesc(desc,tn):
             p = fsp_split[2]
             fsp_sep = fsp_split[0] +" "+fsp_split[1] +" "+fsp_split[2]
             customerInfo = {
-                "fsp": fsp,
-                "desc": desc_output,
-                "ontid": ont,
-                "sn": sn,
-                'p': p,
-                "fsp_sep" : fsp_sep,
+                "FSP": fsp,
+                "Description": desc_output,
+                "ONTID": ont,
+                "SN": sn,
+                'P': p,
+                "Interface" : fs,
                 'state' : status
                 }
             infos.append(customerInfo)

@@ -79,7 +79,7 @@ def search(id,request:schemas.ONUSearchSN,db: Session = Depends(get_db),get_curr
         return device.SearchONU(id,request,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
-@router.post('/{id}/onu/search/desc',status_code=status.HTTP_200_OK)
+@router.post('/{id}/onu/search/desc',status_code=status.HTTP_200_OK,response_model=List[schemas.SerachByDescriptionOuts])
 def searchByDescription(id,request:schemas.SearchByDescription,db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
     DeviceOutput = device.getDevice(id,db)
     if get_current_user.reseller_id == 1:
