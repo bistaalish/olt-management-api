@@ -127,7 +127,7 @@ def SearchBySN(sn,tn):
         final_data = {
             "FSP": extracted_data["F/S/P"].group(1) if extracted_data["F/S/P"] else "Not Found",
             "ONTID": extracted_data["ONT-ID"].group(1) if extracted_data["ONT-ID"] else "Not Found",
-            "sn": extracted_data["SN"].group(1) if extracted_data["SN"] else "Not Found",
+            "SN": extracted_data["SN"].group(1) if extracted_data["SN"] else "Not Found",
             "VendorSN": extracted_data["SN"].group(2) if extracted_data["SN"] else "Not Found",
             "Description": extracted_data["Description"].group(1).strip() if extracted_data["Description"] else "Not Found",
             "LineProfile": extracted_data["Line Profile"].group(1).strip() if extracted_data["Line Profile"] else "Not Found"

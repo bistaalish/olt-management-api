@@ -61,7 +61,7 @@ def getServicesByDevice(id: int, db: Session = Depends(get_db),get_current_user:
         return service.getServicesByDevice(id,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
-@router.get("/{id}/onu/autofind", status_code=status.HTTP_302_FOUND,response_model=List[schemas.Autofind])
+@router.get("/{id}/onu/autofind", status_code=status.HTTP_200_OK,response_model=List[schemas.Autofind])
 def findONU(id:int,db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
     DeviceOutput = device.getDevice(id,db)
     if get_current_user.reseller_id == 1:
@@ -98,7 +98,7 @@ def deleteONU(id,request:schemas.ONUSearchSN,db:Session = Depends(get_db),get_cu
         return device.deleteONU(id,request,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
-@router.post("/{id}/onu/add",status_code=status.HTTP_200_OK)
+@router.post("/{id}/onu/add",status_code=status.HTTP_201_CREATED)
 def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
     DeviceOutput = device.getDevice(id,db)
     if get_current_user.reseller_id == 1:

@@ -71,6 +71,7 @@ class ShowDevice(BaseModel):
     ip: str
     username: str
 
+
 class Login(BaseModel):
     email: str
     password: str
@@ -145,13 +146,13 @@ class ONUSearchSN(BaseModel):
 class ONUSearchSNOutput(BaseModel):
     Description: str
     FSP: str
-    sn: str
+    SN: str
     ONTID: str
     VendorSN: str
     LineProfile: str
 
 class AddONU(BaseModel):
-    sn : str
+    SN : str
     FSP: str
     interface: str
     port: str
@@ -179,3 +180,18 @@ class SerachByDescriptionOuts(BaseModel):
     Interface: str
     state: str
 
+class DashBoardService(BaseModel):
+    id: int
+    name: str
+    serviceprofile_id: str
+    lineprofile_id: str
+    gemport: str
+    vlan: str
+
+class DashboardDevice(BaseModel):
+    id: int
+    ip: str
+    name: str
+    vendor: str
+    model: str
+    serviceprofiles: List[DashBoardService]

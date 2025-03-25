@@ -11,8 +11,10 @@ def getAll(db:Session):
     return devices
 
 def getDeviceByResellerId(db:Session,id:int):
-    print(id)
-    devices = db.query(models.Device).filter(models.Device.reseller_id == id)
+    if id == 1:
+        devices = db.query(models.Device).all()
+    else:
+        devices = db.query(models.Device).filter(models.Device.reseller_id == id).all()
     if not devices:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No devices found")
     return devices
@@ -102,7 +104,7 @@ def addONU(id,request: schemas.AddONU,db:Session):
     device = db.query(models.Device).filter(models.Device.id == id).first()
     service = db.query(models.ServiceProfile).filter(models.ServiceProfile.id == request.service_id).first()
     data = {
-        "sn" : request.sn,
+        "sn" : request.SN,
         "FSP" : request.FSP,
         "interface" : request.interface,
         "port" : request.port,
