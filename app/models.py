@@ -1,5 +1,5 @@
 from .database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
 class Reseller(Base):
@@ -47,4 +47,7 @@ class ServiceProfile(Base):
     gemport = Column(String)
     vlan = Column(String)
     device_id = Column(Integer, ForeignKey('devices.id'))
+    acs = Column(Boolean)
+    acs_gemport = Column(String)
+    acs_vlan = Column(String)
     device = relationship("Device", back_populates="serviceprofiles")
