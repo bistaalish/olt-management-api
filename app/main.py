@@ -5,7 +5,7 @@ from .database import engine,get_db,SessionLocal
 from fastapi.middleware.cors import CORSMiddleware
 # from sqlalchemy.orm import Session
 # from .hashing import Hash
-from .routers import reseller,user,auth,device,service
+from .routers import reseller,user,auth,device,service,onu
 import uvicorn
 import time
 import logging
@@ -70,3 +70,6 @@ app.include_router(device.router)
 
 # Include the service router
 app.include_router(service.router)
+
+# Include the ONU details
+app.include_router(onu.router)

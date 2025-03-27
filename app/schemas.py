@@ -201,3 +201,10 @@ class DashboardDevice(BaseModel):
     vendor: str
     model: str
     serviceprofiles: List[DashBoardService]
+
+class ONUOutput(BaseModel):
+    id: int
+    SN: str
+    Description: str
+    AddedBy: str
+

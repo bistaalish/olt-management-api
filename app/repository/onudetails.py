@@ -18,7 +18,7 @@ def deleteONUEntry(sn, db: Session):
     db.commit()
     return "deleted"
 
-def getONU(db: Session):
+def getAll(db: Session):
     ONUs = db.query(models.ONUDetails).all()
     if not ONUs:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No ONUs found")
