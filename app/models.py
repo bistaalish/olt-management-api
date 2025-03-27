@@ -51,3 +51,11 @@ class ServiceProfile(Base):
     acs_gemport = Column(String)
     acs_vlan = Column(String)
     device = relationship("Device", back_populates="serviceprofiles")
+
+class ONUDetails(Base):
+    __tablename__ = "onu_details"
+    id = Column(Integer, primary_key=True, index=True)
+    sn = Column(String)
+    Description = Column(String)
+    device_id = Column(Integer, ForeignKey('devices.id'))
+    serviceprofile_id = Column(Integer, ForeignKey('services.id'))
