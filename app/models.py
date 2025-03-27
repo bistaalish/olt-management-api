@@ -57,5 +57,6 @@ class ONUDetails(Base):
     id = Column(Integer, primary_key=True, index=True)
     SN = Column(String)
     Description = Column(String)
+    AddedBy = Column(String)
     device_id = Column(Integer, ForeignKey('devices.id'))
     serviceprofile_id = Column(Integer, ForeignKey('services.id'))
