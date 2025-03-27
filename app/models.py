@@ -55,7 +55,7 @@ class ServiceProfile(Base):
 class ONUDetails(Base):
     __tablename__ = "onu_details"
     id = Column(Integer, primary_key=True, index=True)
-    sn = Column(String)
+    SN = Column(String)
     Description = Column(String)
     device_id = Column(Integer, ForeignKey('devices.id'))
     serviceprofile_id = Column(Integer, ForeignKey('services.id'))
