@@ -3,7 +3,7 @@ from typing import List
 from .. import schemas, models,oauth2
 from ..database import SessionLocal, get_db
 from sqlalchemy.orm import Session
-from ..repository import device,service
+from ..repository import device,service,onudetails
 
 router = APIRouter(
     tags=["Devices"],
@@ -102,7 +102,16 @@ def deleteONU(id,request:schemas.ONUSearchSN,db:Session = Depends(get_db),get_cu
 def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
     DeviceOutput = device.getDevice(id,db)
     if get_current_user.reseller_id == 1:
-        return device.addONU(id,request,db)
+        AddONUOutput =  device.addONU(id,request,db)
+        data = AddONUOutput['data']
+        if AddONUOutput["status"] == "failed":
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        data["AddedBy"] = get_current_user.email
+        onudetails.create(data,db)
+        print(data)
+        return "Added"
     if DeviceOutput.reseller_id == get_current_user.reseller_id:
-        return device.addONU(id,request,db)
+        data = device.addONU(id,request,db)
+        print(data)
+        return "Added"
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)

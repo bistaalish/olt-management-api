@@ -119,5 +119,11 @@ def addONU(id,request: schemas.AddONU,db:Session):
     }
     tn = Huawei.TelnetSession(device)
     AddOuput = Huawei.AddONU(tn,data)
-    print(AddOuput)
-    return "Added"
+    if AddOuput['status'] == 'failed':
+        print(AddOuput['error'])
+        raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=AddOuput['error'])
+    OutputData = AddOuput['data']
+    OutputData["device_id"] = device.id
+    OutputData["service_id"] = service.id
+    AddOuput["data"] = OutputData
+    return AddOuput

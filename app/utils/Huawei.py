@@ -201,8 +201,13 @@ def AddONU(tn,data):
             tn.write(b'\n')
         output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
         print(output)
+        data = {
+            "SN" : data['sn'],
+            "Description" : data['description']
+        }
         return {
-            "status" : "success"
+            "status" : "success",
+            "data" : data
         }
     except Exception as e:
         return {
