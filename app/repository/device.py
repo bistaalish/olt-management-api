@@ -3,7 +3,7 @@ from fastapi import HTTPException, status, Depends
 from .. import models,schemas
 from ..hashing import Hash
 from ..utils import Huawei
-
+from ..repository import onudetails
 def getAll(db:Session):
     devices = db.query(models.Device).all()
     if not devices:
@@ -98,6 +98,7 @@ def deleteONU(id,request:schemas.ONUSearchSN,db:Session):
         print(DeleteOutput['error'])
         raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=DeleteOutput['error'])
     # print(DeleteOutput)
+    onudetails.deleteONUEntry(request.sn,db)
     return "deleted"
 
 def addONU(id,request: schemas.AddONU,db:Session):

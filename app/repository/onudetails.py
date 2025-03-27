@@ -10,3 +10,10 @@ def create(data, db: Session):
     db.commit()
     db.refresh(new_ONU)
     return data
+
+def deleteONUEntry(sn, db: Session):
+    ONU = db.query(models.ONUDetails).filter(models.ONUDetails.SN == sn).delete(synchronize_session=False)
+    if not ONU:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"ONU with SN {sn} not found")
+    db.commit()
+    return "deleted"

@@ -165,7 +165,8 @@ def deleteONU(tn,data):
            raise Exception("Virtual Port Not deleted")
         if " Number of ONTs that can be deleted: 1, success: 1" in output:
             return {
-            "status" : "success"
+            "status" : "success",
+            
             }
    except Exception as e:
         print(f"Error while capturing ONT information: {str(e)}")

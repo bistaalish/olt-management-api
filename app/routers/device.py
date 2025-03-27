@@ -111,7 +111,12 @@ def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_us
         print(data)
         return "Added"
     if DeviceOutput.reseller_id == get_current_user.reseller_id:
-        data = device.addONU(id,request,db)
+        AddONUOutput =  device.addONU(id,request,db)
+        data = AddONUOutput['data']
+        if AddONUOutput["status"] == "failed":
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        data["AddedBy"] = get_current_user.email
+        onudetails.create(data,db)
         print(data)
         return "Added"
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
