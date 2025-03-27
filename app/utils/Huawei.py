@@ -193,6 +193,12 @@ def AddONU(tn,data):
         tn.write(quitCMD.encode('ascii'))
         tn.write(AddServicePortCMD.encode('ascii'))
         tn.write(b'\n')
+        if data['acs'] == True:
+            ACSCommand = "service-port vlan " + data['acs_vlan'] + " gpon " + data['FSP'] + " ont " + ontid + " gemport " + data['acs_gemport'] + " multi-service user-vlan " + data['acs_vlan'] + " tag-transform translate\n"
+            quitCMD = "quit \n"
+            tn.write(b"\n")
+            tn.write(ACSCommand.encode('ascii'))
+            tn.write(b'\n')
         output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
         print(output)
         return {

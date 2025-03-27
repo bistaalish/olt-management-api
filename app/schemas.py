@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator, ValidationError,Field
-from typing import List, Optional 
+from typing import List, Optional
 
 class UserBase(BaseModel):
     name: str
@@ -123,6 +123,9 @@ class ServiceProfile(BaseModel):
     gemport: str
     vlan: str
     device_id: int
+    acs: Optional[bool]  = True
+    acs_gemport: Optional[str] = None
+    acs_vlan: Optional[str] = None
 
 class ShowServiceProfile(BaseModel):
     id: int
@@ -132,6 +135,9 @@ class ShowServiceProfile(BaseModel):
     gemport: str
     vlan: str
     device: DeviceService
+    acs: bool
+    acs_gemport: str
+    acs_vlan: str
 
 class Autofind(BaseModel):
     SN: str

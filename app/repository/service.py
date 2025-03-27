@@ -14,7 +14,7 @@ def create(request: schemas.ServiceProfile, db: Session = Depends(get_db)):
     service = db.query(models.ServiceProfile).filter(models.ServiceProfile.vlan == request.vlan).first()
     if service:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Service with this VLAN already exists")
-    newService = models.ServiceProfile(name=request.name,serviceprofile_id=request.serviceprofile_id,lineprofile_id=request.lineprofile_id,gemport=request.gemport,vlan=request.vlan,device_id=request.device_id)
+    newService = models.ServiceProfile(name=request.name,serviceprofile_id=request.serviceprofile_id,lineprofile_id=request.lineprofile_id,gemport=request.gemport,vlan=request.vlan,device_id=request.device_id,acs=request.acs,acs_gemport=request.acs_gemport,acs_vlan=request.acs_vlan)
     db.add(newService)
     db.commit()
     db.refresh(newService)

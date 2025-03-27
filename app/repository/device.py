@@ -112,7 +112,10 @@ def addONU(id,request: schemas.AddONU,db:Session):
         "description" : request.description,
         "gemport"  : service.gemport,
         "serviceProfileId" : service.serviceprofile_id,
-        "lineProfileId" : service.lineprofile_id
+        "lineProfileId" : service.lineprofile_id,
+        "acs" : service.acs,
+        "acs_gemport" : service.acs_gemport,
+        "acs_vlan" : service.acs_vlan
     }
     tn = Huawei.TelnetSession(device)
     AddOuput = Huawei.AddONU(tn,data)
