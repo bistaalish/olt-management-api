@@ -59,9 +59,9 @@ class Device(BaseModel):
     ip: str
     username: str
     password: str
-
-    class Config():
-        orm_mode = True
+    SNMP_RO: str
+    # class Config():
+    #     orm_mode = True
 
 class ShowDevice(BaseModel):
     name: str
@@ -94,7 +94,7 @@ class DeviceBase(BaseModel):
     username: str
     password: str
     reseller_id: int
-
+    SNMP_RO: Optional[str] = None
     class Config():
         orm_mode = True
 

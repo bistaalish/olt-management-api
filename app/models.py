@@ -33,6 +33,7 @@ class Device(Base):
     ip = Column(String(255), unique=True)
     username = Column(String(255))
     password = Column(String(255))
+    SNMP_RO = Column(String(255))
     reseller_id = Column(Integer, ForeignKey('resellers.id'))
     reseller = relationship("Reseller", back_populates="devices")
     serviceprofiles = relationship("ServiceProfile", back_populates="device")
