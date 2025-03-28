@@ -208,3 +208,7 @@ class ONUOutput(BaseModel):
     Description: str
     AddedBy: str
 
+class DashboardOutput(BaseModel):
+    user: UserBase
+    reseller: ShowUserReseller
+    devices: List[DashboardDevice]

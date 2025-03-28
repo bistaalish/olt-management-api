@@ -26,6 +26,14 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.get("/dashboard",status_code=status.HTTP_200_OK,response_model=List[schemas.DashboardDevice], tags=['dashboard'])
+@router.get("/dashboard",status_code=status.HTTP_200_OK,response_model=schemas.DashboardOutput, tags=['dashboard'])
 def dashboard(db: Session = Depends(get_db),get_current_user:schemas.Device= Depends(oauth2.get_current_user)):
-    return device.getDeviceByResellerId(db,get_current_user.reseller_id) 
+    user = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+    reseller = db.query(models.Reseller).filter(models.Reseller.id == get_current_user.reseller_id).first()
+    devices = device.getDeviceByResellerId(db,get_current_user.reseller_id)
+    data = {
+        "user": user,
+        "reseller": reseller,
+        "devices":  devices
+    }
+    return data
