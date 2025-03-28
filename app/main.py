@@ -1,14 +1,21 @@
 from fastapi import FastAPI, Depends, status, Response, HTTPException, Request
 from . import schemas, models, hashing
 # from typing import List
-from .database import engine,get_db,SessionLocal
+from .database import engine,get_db,SessionLocal,check_and_create_reseller
 from fastapi.middleware.cors import CORSMiddleware
+from .repository import reseller as RepositoryReseller
+
 # from sqlalchemy.orm import Session
 # from .hashing import Hash
 from .routers import reseller,user,auth,device,service,onu
 import uvicorn
 import time
 import logging
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Define allowed origins
 
@@ -57,6 +64,11 @@ async def log_requests(request: Request, call_next):
     return response
 models.Base.metadata.create_all(engine)
 
+@app.on_event("startup")
+def startup():
+    db = SessionLocal()
+    check_and_create_reseller(db)
+    db.close()
 # Include the auth router
 app.include_router(auth.router)
 # Include the reseller router
