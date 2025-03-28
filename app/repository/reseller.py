@@ -18,6 +18,16 @@ def getResellerMe(reseller_id:int,db: Session):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Reseller with id {reseller_id} not found")
     return reseller
 
+def createReseller(data:dict,db:Session):
+    reseller = db.query(models.Reseller).filter(models.Reseller.name == data['name']).first()
+    if reseller:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Reseller with this name already exists")
+    newReseller = models.Reseller(name=data['name'],email=data['email'],phone=data['phone'])
+    db.add(newReseller)
+    db.commit()
+    db.refresh(newReseller)
+    return newReseller
+
 def create(request: schemas.Reseller,db: Session):
     reseller = db.query(models.Reseller).filter(models.Reseller.name == request.name).first()
     if reseller:

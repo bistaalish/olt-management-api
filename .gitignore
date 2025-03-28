@@ -3,3 +3,4 @@ app/__pycache__/
 flink.db
 app/routes/__pycache__/
 http_logs.log
+.env
