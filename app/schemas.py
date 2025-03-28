@@ -123,7 +123,7 @@ class ServiceProfile(BaseModel):
     gemport: str
     vlan: str
     device_id: int
-    acs: Optional[bool]  = True
+    acs: Optional[bool]  = False
     acs_gemport: Optional[str] = None
     acs_vlan: Optional[str] = None
 
@@ -164,6 +164,7 @@ class AddONU(BaseModel):
     port: str
     service_id: int
     description: str
+    nativevlan:  Optional[bool]  = False
 
 class ResetPassword(BaseModel):
     password: str

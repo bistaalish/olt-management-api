@@ -187,6 +187,12 @@ def AddONU(tn,data):
             raise Exception("SN not added, SN already Exists")
         match = re.search(r"ONTID\s*:(\d+)", output)
         ontid = match.group(1)
+        if data['nativevlan'] == True:
+            # Add native VLAN
+            NativeVLANCommand = "ont port native-vlan " + data['port'] + " " + ontid + " " + " eth 1 vlan " + data['vlan'] + " priority 0\n\n"
+            tn.write(b"\n")
+            tn.write(NativeVLANCommand.encode('ascii'))
+            tn.write(b'\n')
         AddServicePortCMD = "service-port vlan " + data['vlan'] + " gpon " + data['FSP'] + " ont " + ontid + " gemport " + data['gemport'] + " multi-service user-vlan " + data['vlan'] + " tag-transform translate\n"
         quitCMD = "quit \n"
         tn.write(b"\n")
