@@ -12,15 +12,24 @@ class Reseller(Base):
     users = relationship("User", back_populates="reseller")
     devices = relationship("Device", back_populates="reseller")
 
+class Roles(Base):
+    __tablename__ = 'roles'
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255))
+    roles = relationship("User", back_populates="roles")
+
+
 class User(Base):
     __tablename__ = "users"
-
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255))
     email = Column(String(255))
     password = Column(String(255))
+    role_id = Column(Integer, ForeignKey('roles.id'))
     reseller_id = Column(Integer, ForeignKey('resellers.id'))
     reseller = relationship("Reseller", back_populates="users")
+    roles = relationship("Roles", back_populates="roles")
+
 
 class Device(Base):
     __tablename__ = "devices"

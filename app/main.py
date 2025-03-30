@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, status, Response, HTTPException, Request
 from . import schemas, models, hashing
 # from typing import List
-from .database import engine,get_db,SessionLocal,check_and_create_reseller
+from .database import engine,get_db,SessionLocal,CreateAdminRoleAndUserIfNotExists
 from fastapi.middleware.cors import CORSMiddleware
 from .repository import reseller as RepositoryReseller
 
@@ -67,7 +67,7 @@ models.Base.metadata.create_all(engine)
 @app.on_event("startup")
 def startup():
     db = SessionLocal()
-    check_and_create_reseller(db)
+    CreateAdminRoleAndUserIfNotExists(db)
     db.close()
 # Include the auth router
 app.include_router(auth.router)
