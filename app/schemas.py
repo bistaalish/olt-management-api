@@ -88,7 +88,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
-    reseller_id: Optional[int] = None  
+    role_id: Optional[int] = None  
 
 class DeviceBase(BaseModel):
     name: str

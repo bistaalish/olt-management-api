@@ -21,28 +21,25 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(
     if not Hash.verify(user.password,request.password):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid Password")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    data = {"sub": user.email,  "role_id" : user.role_id}
     access_token = create_access_token(
-        data={"sub": user.email, "reseller_id": user.reseller_id}, expires_delta=access_token_expires
+        data, expires_delta=access_token_expires
     )
-    print(user.reseller_id)
-    if user.reseller_id == 1:
-        return {"access_token": access_token, "token_type": "bearer","role":"admin"}
-    else:
-        return {"access_token": access_token, "token_type": "bearer","role":"user"}
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/dashboard",status_code=status.HTTP_200_OK,response_model=schemas.DashboardOutput, tags=['dashboard'])
 def dashboard(db: Session = Depends(get_db),get_current_user:schemas.Device= Depends(oauth2.get_current_user)):
-    if get_current_user.reseller_id == 1:
+    if get_current_user.role_id == 1:
         deviceCount = db.query(models.Device).count()
         resellerCount = db.query(models.Reseller).count()
         ONUCount = db.query(models.ONUDetails).count()
         userCount = db.query(models.User).count()
         data = {
-            "deviceCount": deviceCount,
-            "resellerCount": resellerCount,
-            "ONUCount": ONUCount,
-            "userCount": userCount
-        }
+                "deviceCount": deviceCount,
+                "resellerCount": resellerCount,
+                "ONUCount": ONUCount,
+                "userCount": userCount
+            }
         return data
     # user = db.query(models.User).filter(models.User.email == get_current_user.email).first()
     # reseller = db.query(models.Reseller).filter(models.Reseller.id == get_current_user.reseller_id).first()

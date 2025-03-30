@@ -4,7 +4,8 @@ from jose import jwt, JWTError
 from . import schemas
 import os
 from dotenv import load_dotenv
-
+from .database import SessionLocal, get_db
+from . import models
 
 # Load environment variables from .env file
 load_dotenv()
@@ -25,12 +26,14 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 def verify_token(token:str,credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(payload)
         email: str = payload.get("sub")
-        reseller_id: str = payload.get("reseller_id")
+        role_id: str = payload.get("role_id")
+        # print(email, role_id)
         if email is None:
             raise credentials_exception
-        if reseller_id is None:
+        if role_id is None:
             raise credentials_exception
-        return schemas.TokenData(email=email,reseller_id=reseller_id)
+        return schemas.TokenData(email=email,role_id=role_id)
     except JWTError:
         raise credentials_exception 
