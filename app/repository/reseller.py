@@ -54,8 +54,8 @@ def deleteReseller(reseller_id: int, db: Session):
     return "deleted"
 
 def updateReseller(reseller_id: int, request: schemas.Reseller, db: Session):
-    if reseller_id == 1:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Can't update the Admin reseller")
+    # if reseller_id == 1:
+    #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Can't update the Admin reseller")
     reseller = db.query(models.Reseller).filter(models.Reseller.id == reseller_id).first()
     if not reseller:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Reseller with id {reseller_id} not found")

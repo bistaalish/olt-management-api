@@ -127,5 +127,6 @@ def addONU(id,request: schemas.AddONU,db:Session):
     OutputData = AddOuput['data']
     OutputData["device_id"] = device.id
     OutputData["service_id"] = service.id
+    OutputData['reseller_id'] = device.reseller_id
     AddOuput["data"] = OutputData
     return AddOuput

@@ -61,3 +61,4 @@ class ONUDetails(Base):
     AddedBy = Column(String(255))
     device_id = Column(Integer, ForeignKey('devices.id'))
     service_id = Column(Integer, ForeignKey('services.id'))
+    reseller_id = Column(Integer, ForeignKey('resellers.id'))

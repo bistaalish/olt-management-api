@@ -32,15 +32,20 @@ class ShowUserReseller(BaseModel):
     id: int
     class Config():
         orm_mode = True
+
+class ShowDeviceReseller(BaseModel):
+    id: int
+    name: str
+
 class ShowReseller(BaseModel):
+    id: int
     name: str
     email: str
     phone: str
     users: List[ShowResellerUsers] = []
-
+    devices: List[ShowDeviceReseller] = []
     class Config():
         orm_mode = True
-
 
 
 class ShowUser(BaseModel):
@@ -210,6 +215,7 @@ class ONUOutput(BaseModel):
     AddedBy: str
 
 class DashboardOutput(BaseModel):
-    user: UserBase
-    reseller: ShowUserReseller
-    devices: List[DashboardDevice]
+    deviceCount: int
+    resellerCount: int
+    ONUCount: int
+    userCount: int

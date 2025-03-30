@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status, Response, HTTPException
+from sqlalchemy.exc import IntegrityError
 from typing import List
 from .. import schemas, models,oauth2
 from ..database import SessionLocal, get_db
@@ -45,10 +46,22 @@ def get_reseller(reseller_id: int, response: Response , db: Session = Depends(ge
 def delete_reseller(reseller_id: int, db: Session = Depends(get_db),get_current_user:schemas.Reseller= Depends(oauth2.get_current_user)):
     if get_current_user.reseller_id != 1:
         raise HTTPException(status_code=403, detail="Forbidden")
-    return reseller.deleteReseller(reseller_id,db)
+    try:
+        # Attempt to delete the reseller
+        return reseller.deleteReseller(reseller_id, db)
+    except IntegrityError as e:
+        # Handle foreign key constraint violation error
+        db.rollback()  # Rollback the transaction
+        raise HTTPException(status_code=400, detail="Cannot delete reseller due to foreign key constraints")
+    except Exception as e:
+        # For any other errors, raise a 500 server error
+        if reseller_id == 1:
+            raise HTTPException(status_code=400, detail="Cannot delete Admin reseller")
+        db.rollback()  # Rollback the transaction in case of an unexpected error
+        raise HTTPException(status_code=500, detail="An unexpected error occurred")
 
 # PUT /reseller/{reseller_id}
-@router.put("/{reseller_id}", status_code=status.HTTP_202_ACCEPTED)
+@router.put("/{reseller_id}", status_code=status.HTTP_202_ACCEPTED,response_model=schemas.ShowReseller)
 def update_reseller(reseller_id: int, request: schemas.ResellerBase, db: Session = Depends(get_db),get_current_user:schemas.Reseller= Depends(oauth2.get_current_user)):
     if get_current_user.reseller_id != 1:
         raise HTTPException(status_code=403, detail="Forbidden")
