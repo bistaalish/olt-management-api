@@ -21,13 +21,13 @@ def create(request: schemas.User,db: Session):
     user = db.query(models.User).filter(models.User.email == request.email).first()
     if user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User with this email already exists")
-    new_user = models.User(name=request.name,email=request.email,password=Hash.bcrypt(request.password),reseller_id=request.reseller_id)
+    new_user = models.User(name=request.name,email=request.email,password=Hash.bcrypt(request.password),role_id=request.role_id)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return new_user
 
-def resetPassword(user_id:int, request: schemas.ResetPassword,db: Session,):
+def resetPassword(user_id:int, request: schemas.ResetPassword,db: Session):
     if request.password != request.confirm_password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match")
     user = db.query(models.User).filter(models.User.id == user_id).first()
@@ -69,7 +69,7 @@ def updateUser(user_id: int, request: schemas.User, db: Session):
     user.name = request.name
     user.email = request.email
     # user.password = Hash.bcrypt(request.password)
-    user.reseller_id = request.reseller_id
+    user.role_id = request.role_id
     db.commit()
     db.refresh(user)
     return "updated"

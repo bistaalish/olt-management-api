@@ -1,16 +1,20 @@
 from pydantic import BaseModel, field_validator, ValidationError,Field
 from typing import List, Optional
 
+class Role(BaseModel):
+    id: int
+    name: str
+
 class UserBase(BaseModel):
     name: str
     email: str
-    reseller_id: int
+    role_id: int
 
 class User(UserBase):
     name: str
     email: str
     password: str
-    reseller_id: int
+    role_id: int
 
 class ResellerBase(BaseModel):
     name: str
@@ -40,6 +44,8 @@ class ShowDeviceReseller(BaseModel):
     id: int
     name: str
     Location: str
+
+
 class ShowReseller(BaseModel):
     id: int
     name: str
@@ -52,9 +58,10 @@ class ShowReseller(BaseModel):
 
 
 class ShowUser(BaseModel):
+    id: int
     name: str
     email: str
-    reseller: ShowUserReseller
+    roles: Role
      
     class Config():
         orm_mode = True
