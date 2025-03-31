@@ -7,8 +7,9 @@ class Reseller(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255))
-    email = Column(String(255), unique=True)
     phone = Column(String(255))
+    Location = Column(String(255))
+    Descriptions = Column(String(255))
     users = relationship("User", back_populates="reseller")
     devices = relationship("Device", back_populates="reseller")
 

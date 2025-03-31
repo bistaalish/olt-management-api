@@ -14,34 +14,37 @@ class User(UserBase):
 
 class ResellerBase(BaseModel):
     name: str
-    email: str
+    Location: str
+    Descriptions: str
     phone: str
 
 class Reseller(ResellerBase):
     name: str
-    email: str
+    Location: str
+    Descriptions: str
     phone: str
     users: List[User] = []
 
 class ShowResellerUsers(BaseModel):
     name: str
-    email: str
+    Descriptions: str
 
 class ShowUserReseller(BaseModel):
     name: str
     id: int
+
     class Config():
         orm_mode = True
 
 class ShowDeviceReseller(BaseModel):
     id: int
     name: str
-
+    Location: str
 class ShowReseller(BaseModel):
     id: int
     name: str
-    email: str
-    phone: str
+    Location: str
+    Descriptions: str
     users: List[ShowResellerUsers] = []
     devices: List[ShowDeviceReseller] = []
     class Config():
@@ -88,7 +91,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
-    role_id: Optional[int] = None  
+    roles: str
 
 class DeviceBase(BaseModel):
     name: str

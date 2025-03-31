@@ -1,6 +1,13 @@
 from fastapi import APIRouter, Depends, status, Response, HTTPException
 from . import schemas, oauth2
 
+def role_required(required_role: str):
+    def wrapper(current_user: dict = Depends(oauth2.get_current_user)):
+        if current_user.roles != required_role:
+            raise HTTPException(status_code=403, detail="Insufficient permissions")
+        return current_user
+    return wrapper
+
 # Universal admin check
 def checkAdmin(get_current_user: schemas.Reseller = Depends(oauth2.get_current_user)):
     """Dependency to check if the user is an Admin (role_id == 1)."""

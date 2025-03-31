@@ -21,7 +21,8 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(
     if not Hash.verify(user.password,request.password):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid Password")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    data = {"sub": user.email,  "role_id" : user.role_id}
+    data = {"sub": user.email,  "roles" : user.roles.name}
+    print("role:",data)
     access_token = create_access_token(
         data, expires_delta=access_token_expires
     )
