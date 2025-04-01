@@ -15,6 +15,7 @@ class User(UserBase):
     email: str
     password: str
     role_id: int
+    reseller_id: Optional[int]
 
 class ResellerBase(BaseModel):
     name: str
@@ -62,7 +63,7 @@ class ShowUser(BaseModel):
     name: str
     email: str
     roles: Role
-     
+    reseller: Optional[ShowUserReseller]
     class Config():
         orm_mode = True
 

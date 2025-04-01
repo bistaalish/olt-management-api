@@ -46,9 +46,14 @@ def checkAdminRole(db: Session):
 # Create admin Role
 def createAdminRole(db: Session):
     adminRole = models.Roles(id=1,name="Admin")
+    FSupportRole = models.Roles(id=2,name="FSupport")
+    FFileRole = models.Roles(id=3,name="Field Support")
     db.add(adminRole)
+    db.add(FSupportRole)
+    db.add(FFileRole)
     db.commit()
     db.refresh(adminRole)
+
     print(f"Created Admin role with id={adminRole.id}")
 
 # Check if Admin User exists in database

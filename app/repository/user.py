@@ -21,7 +21,7 @@ def create(request: schemas.User,db: Session):
     user = db.query(models.User).filter(models.User.email == request.email).first()
     if user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User with this email already exists")
-    new_user = models.User(name=request.name,email=request.email,password=Hash.bcrypt(request.password),role_id=request.role_id)
+    new_user = models.User(name=request.name,email=request.email,password=Hash.bcrypt(request.password),role_id=request.role_id,reseller_id=request.reseller_id)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
