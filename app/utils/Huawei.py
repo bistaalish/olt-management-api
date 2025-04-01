@@ -229,7 +229,7 @@ def searchByDesc(desc,tn):
         # print(output)
         while True:
             # Read the output from the command
-            chunk = tn.read_until(b"---- More ( Press 'Q' to break ) ----", timeout=10).decode('ascii')
+            chunk = tn.read_until(b"---- More ( Press 'Q' to break ) ----", timeout=30).decode('ascii')
             output += chunk
             if "---- More ( Press 'Q' to break ) ----" in chunk:
                 # If the pagination prompt is found, send newlines to get more output
@@ -237,6 +237,7 @@ def searchByDesc(desc,tn):
             else:
                 # Break the loop if no pagination prompt is found
                 break
+        print(output)
         pattern = r'\b\d+/\s*\d+/\d+\s+\d+\s+\w+\s+\w+\s+\w+\s+\w+\s+\w+\b'
         pattern1 = r'\b\d+/\s*\d+/\s*\d+\b\s+\d+\s+(\b\w+\b)'
         fsps_set = re.findall(pattern, output)

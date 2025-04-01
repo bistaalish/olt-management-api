@@ -3,7 +3,7 @@ from typing import List
 from .. import schemas, models,oauth2
 from ..database import SessionLocal, get_db
 from sqlalchemy.orm import Session
-from ..repository import device,service,onudetails
+from ..repository import device,service,onudetails,user
 from ..middlewares import checkAdmin, role_required
 
 router = APIRouter(
@@ -62,46 +62,51 @@ def getServicesByDevice(id: int, db: Session = Depends(get_db),get_current_user:
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 @router.get("/{id}/onu/autofind", status_code=status.HTTP_200_OK,response_model=List[schemas.Autofind])
-def findONU(id:int,db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+def findONU(id:int,db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
     DeviceOutput = device.getDevice(id,db)
-    if get_current_user.reseller_id == 1:
+    UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+    if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
         return device.findONU(id, db)
-    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+    if DeviceOutput.reseller_id == UserInfo.reseller_id:
         return device.findONU(id, db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 @router.post('/{id}/onu/search/sn',status_code=status.HTTP_200_OK,response_model=schemas.ONUSearchSNOutput)
-def search(id,request:schemas.ONUSearchSN,db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+def search(id,request:schemas.ONUSearchSN,db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
     DeviceOutput = device.getDevice(id,db)
-    if get_current_user.reseller_id == 1:
+    UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+    if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
         return device.SearchONU(id,request,db)
-    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+    if DeviceOutput.reseller_id == UserInfo.reseller_id:
         return device.SearchONU(id,request,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 @router.post('/{id}/onu/search/desc',status_code=status.HTTP_200_OK,response_model=List[schemas.SerachByDescriptionOuts])
-def searchByDescription(id,request:schemas.SearchByDescription,db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+def searchByDescription(id,request:schemas.SearchByDescription,db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
     DeviceOutput = device.getDevice(id,db)
-    if get_current_user.reseller_id == 1:
+    UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+    if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
         return device.SearchONUByDesc(id,request,db)
-    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+    if DeviceOutput.reseller_id == UserInfo.reseller_id:
         return device.SearchONUByDesc(id,request,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 
 @router.delete("/{id}/onu/delete",status_code=status.HTTP_200_OK)
-def deleteONU(id,request:schemas.ONUSearchSN,db:Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+def deleteONU(id,request:schemas.ONUSearchSN,db:Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
     DeviceOutput = device.getDevice(id,db)
-    if get_current_user.reseller_id == 1:
+    UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+    if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
         return device.deleteONU(id,request,db)
-    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+    if DeviceOutput.reseller_id == UserInfo.reseller_id:
         return device.deleteONU(id,request,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 @router.post("/{id}/onu/add",status_code=status.HTTP_201_CREATED)
-def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
     DeviceOutput = device.getDevice(id,db)
-    if get_current_user.reseller_id == 1:
+    UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+    if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
         AddONUOutput =  device.addONU(id,request,db)
         data = AddONUOutput['data']
         if AddONUOutput["status"] == "failed":
@@ -110,7 +115,7 @@ def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_us
         onudetails.create(data,db)
         print(data)
         return "Added"
-    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+    if DeviceOutput.reseller_id == UserInfo.reseller_id:
         AddONUOutput =  device.addONU(id,request,db)
         data = AddONUOutput['data']
         if AddONUOutput["status"] == "failed":
