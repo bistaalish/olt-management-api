@@ -80,12 +80,11 @@ class Device(BaseModel):
     #     orm_mode = True
 
 class ShowDevice(BaseModel):
+    id: int
     name: str
     vendor: str
     model: str
     type: str
-    ip: str
-    username: str
 
 
 class Login(BaseModel):

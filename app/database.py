@@ -46,8 +46,8 @@ def checkAdminRole(db: Session):
 # Create admin Role
 def createAdminRole(db: Session):
     adminRole = models.Roles(id=1,name="Admin")
-    FSupportRole = models.Roles(id=2,name="FSupport")
-    FFileRole = models.Roles(id=3,name="Field Support")
+    FSupportRole = models.Roles(id=2,name="Support")
+    FFileRole = models.Roles(id=3,name="Technicians")
     db.add(adminRole)
     db.add(FSupportRole)
     db.add(FFileRole)

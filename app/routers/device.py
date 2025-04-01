@@ -4,6 +4,7 @@ from .. import schemas, models,oauth2
 from ..database import SessionLocal, get_db
 from sqlalchemy.orm import Session
 from ..repository import device,service,onudetails
+from ..middlewares import checkAdmin, role_required
 
 router = APIRouter(
     tags=["Devices"],
@@ -11,46 +12,45 @@ router = APIRouter(
 )
 
 # GET /device
-@router.get("/", status_code=status.HTTP_200_OK,response_model=List[schemas.Device])
-def get_devices(db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
-    if get_current_user.reseller_id == 1:
+@router.get("/", status_code=status.HTTP_200_OK,response_model=List[schemas.ShowDevice])
+def get_devices(db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
+    if get_current_user.roles == "Admin":
         return device.getAll(db)
-    return device.getDeviceByResellerId(db,get_current_user.reseller_id)
+    else:
+        user = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+        return device.getDeviceByResellerId(db,user.reseller_id)
 
 
 # POST /device
 @router.post("/",status_code=status.HTTP_201_CREATED,response_model=schemas.DeviceBase)
-def create(request: schemas.DeviceBase,db: Session= Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
-    # Create a new Device
-    if get_current_user.reseller_id == 1:
-        return device.create(request,db)
-    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
-
+def create(request: schemas.DeviceBase,db: Session= Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support"))):
+    return device.create(request,db)
+    
 
 # GET /device/{id}
-@router.get("/{id}", status_code=status.HTTP_200_OK,response_model=schemas.Device)
-def get_device(id:int, db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+@router.get("/{id}", status_code=status.HTTP_200_OK,response_model=schemas.ShowDevice)
+def get_device(id:int, db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
     DeviceOutput = device.getDevice(id,db)
-    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+    if get_current_user.roles == "Admin":
         return DeviceOutput
-    if get_current_user.reseller_id == 1:
-        return DeviceOutput
-    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
-
+    else:
+        user = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+        if user.reseller_id == DeviceOutput.reseller_id:
+            return DeviceOutput
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    
 
 # PUT /device/{id}
 @router.put("/{id}", status_code=status.HTTP_202_ACCEPTED)
-def update(id:int,request: schemas.DeviceBase, db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
-    if get_current_user.reseller_id == 1:
-        return device.updateDevice(id,request,db)
-    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+def update(id:int,request: schemas.DeviceBase, db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support"))):
+    return device.updateDevice(id,request,db)
+
 
 # DELETE /device/{id}
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete(id:int, db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
-    if get_current_user.reseller_id == 1:
-        return device.deleteDevice(id,db)
-    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+def delete(id:int, db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support"))):
+    return device.deleteDevice(id,db)
+    
 
 @router.get("/{id}/services",status_code=status.HTTP_200_OK,response_model=List[schemas.ShowServiceProfile])
 def getServicesByDevice(id: int, db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
