@@ -53,11 +53,12 @@ def delete(id:int, db: Session = Depends(get_db),get_current_user:schemas.Resell
     
 
 @router.get("/{id}/services",status_code=status.HTTP_200_OK,response_model=List[schemas.ShowServiceProfile])
-def getServicesByDevice(id: int, db: Session = Depends(get_db),get_current_user:schemas.Device = Depends(oauth2.get_current_user)):
+def getServicesByDevice(id: int, db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
     DeviceOutput = device.getDevice(id,db)
-    if get_current_user.reseller_id == 1:
+    UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+    if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
         return service.getServicesByDevice(id,db)
-    if DeviceOutput.reseller_id == get_current_user.reseller_id:
+    if DeviceOutput.reseller_id == UserInfo.reseller_id:
         return service.getServicesByDevice(id,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 

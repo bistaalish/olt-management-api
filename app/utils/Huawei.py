@@ -237,7 +237,6 @@ def searchByDesc(desc,tn):
             else:
                 # Break the loop if no pagination prompt is found
                 break
-        print(output)
         pattern = r'\b\d+/\s*\d+/\d+\s+\d+\s+\w+\s+\w+\s+\w+\s+\w+\s+\w+\b'
         pattern1 = r'\b\d+/\s*\d+/\s*\d+\b\s+\d+\s+(\b\w+\b)'
         fsps_set = re.findall(pattern, output)

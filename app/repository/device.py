@@ -95,11 +95,12 @@ def deleteONU(id,request:schemas.ONUSearchSN,db:Session):
     if (SearchOutput['status'] == "failed"):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{request.sn} not Found in Provided OLT")
     DeleteOutput = Huawei.deleteONU(tn,SearchOutput['device'])
+    print(DeleteOutput['status'])
     if DeleteOutput['status'] == 'failed':
         print(DeleteOutput['error'])
         raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=DeleteOutput['error'])
     # print(DeleteOutput)
-    onudetails.deleteONUEntry(request.sn,db)
+    # onudetails.deleteONUEntry(request.sn,db)
     return "deleted"
 
 def addONU(id,request: schemas.AddONU,db:Session):
