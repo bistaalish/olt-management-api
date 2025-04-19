@@ -52,7 +52,7 @@ def delete(id:int, db: Session = Depends(get_db),get_current_user:schemas.Resell
     return device.deleteDevice(id,db)
     
 
-@router.get("/{id}/services",status_code=status.HTTP_200_OK,response_model=List[schemas.ShowServiceProfile])
+@router.get("/{id}/services",status_code=status.HTTP_200_OK,response_model=List[schemas.DeviceService])
 def getServicesByDevice(id: int, db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
     DeviceOutput = device.getDevice(id,db)
     UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
@@ -90,6 +90,20 @@ def searchByDescription(id,request:schemas.SearchByDescription,db: Session = Dep
         return device.SearchONUByDesc(id,request,db)
     if DeviceOutput.reseller_id == UserInfo.reseller_id:
         return device.SearchONUByDesc(id,request,db)
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+@router.post('/{id}/onu/optical',status_code=status.HTTP_200_OK,response_model=schemas.OpticalPowerResponse)
+def checkOpticalPower(id,request:schemas.OpticalPowerRequest,db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
+    data = {
+        "FSP": request.FSP,
+        "ONTID": request.ONTID,
+    }
+    UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+    DeviceOutput = device.getDevice(id,db)
+    if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
+        return device.CheckONUOptical(id,data,db)
+    if DeviceOutput.reseller_id == UserInfo.reseller_id:
+        return device.CheckONUOptical(id,data,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 

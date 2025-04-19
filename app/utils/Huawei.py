@@ -48,7 +48,7 @@ def autofind(tn):
             else:
                 # Break the loop if the pagination prompt
                 break
-        print(output)
+        # print(output)
         if "Failure: The automatically found ONTs do not exist" in output:
             raise Exception("Failure: The automatically found ONTs do not exist")
         # After capturing all outout, remove an trailing pagintaion prompt
@@ -61,18 +61,21 @@ def autofind(tn):
         for block in blocks:
             if "Number" in block and "F/S/P" in block and "Ont SN" in block:
                 lines = block.strip().split("\n")  # Split block into lines
+                number = lines[0].split(":")[1].strip().split()[0]  # Get the line containing number information
                 fsp_line = lines[1].strip()  # Get the line containing F/S/P information
                 ont_sn_line = lines[2].strip()  # Get the line containing Ont SN information
-                
+                # Get the line containing Vendor ID information
+                VendorID = lines[6].split(":")[1].strip().split()[0]  # Get the line containing Vendor ID information
+                Model = lines[9].split(":")[1].strip().split()[0]  # Get the line containing Model information
                 # Extract F/S/P value
                 fsp = fsp_line.split(":")[1].strip()
                 fs,p = fsp.rsplit("/",1)
-                
+                print(Model)
                 # Extract Ont SN value
                 ont_sn = ont_sn_line.split(":")[1].strip().split()[0]  # Get the first part before the parenthesis
                 
                 # Append the extracted information as a dictionary to the ont_list
-                ont_list.append({"SN": ont_sn, "FSP": fsp, "interface": fs, "port": p})
+                ont_list.append({"SN": ont_sn, "FSP": fsp, "interface": fs, "port": p, "VendorID": VendorID,"Number": number, "Model": Model})
         
         # Determine the status based on whether any ONTs were found
         status = "success" if ont_list else "failed"
@@ -89,6 +92,52 @@ def autofind(tn):
             "devices": []
         }
 
+def getOpticalInfo(tn,data):
+    try:
+        inte,port = data['FSP'].rsplit("/",1)
+        tn.write(b"interface gpon " + inte.encode('ascii') + b"\n")
+        tn.write(b"display ont optical-info " + port.encode('ascii') + b" " + data['ONTID'].encode('ascii') + b"\n")
+        output = ""
+        while True:
+            # Read the output from the command
+            chunk = tn.read_until(b"---- More ( Press 'Q' to break ) ----", timeout=10).decode('ascii')
+            output += chunk
+            if "---- More ( Press 'Q' to break ) ----" in chunk:
+            # If the pagination prompt is found, send newlines to get more output
+                tn.write(b"\n")
+            else:
+                    # Break the loop if no pagination prompt is found
+                break
+        # print(output)
+        if "Failure: The ONT is not online" in output:
+            raise Exception("ONT is offline")
+        ONU_RX = None
+        OLT_RX = None
+        rx_power_match = re.search(r"Rx optical power\(dBm\)\s+: (-?\d+\.\d+)", output)
+        olt_rx_power_match = re.search(r"OLT Rx ONT optical power\(dBm\)\s+: (-?\d+\.\d+)", output)
+
+        if rx_power_match:
+            ONU_RX = float(rx_power_match.group(1))
+        if olt_rx_power_match:
+            OLT_RX = float(olt_rx_power_match.group(1))
+           
+        # Regular expressions for the required fields
+        # Regular expressions for extracting required fields
+        # Regular expressions for extracting required fields
+       
+
+        return {
+            'status' : "success",
+            'ONU_RX' : ONU_RX,
+            'OLT_RX' : OLT_RX
+        }
+    except Exception as e:
+        print(f"Error while capturing ONT information: {str(e)}")
+        return {
+            "status": "failed",
+            "device": [],
+            "message" : str(e)
+        }
 
 def SearchBySN(sn,tn):
     try:
@@ -106,25 +155,26 @@ def SearchBySN(sn,tn):
                 break
         if "Parameter error" in output:
             raise Exception("Invalid SN")
-
         if "The required ONT does not exist" in output:
             raise Exception("No OLT Found")
         # Regular expressions for the required fields
         # Regular expressions for extracting required fields
         # Regular expressions for extracting required fields
         patterns = {
+            "status": r"Run state\s+:\s+(\w+)",
             "F/S/P": r"F/S/P\s+:\s+(\d+/\d+/\d+)",
             "ONT-ID": r"ONT-ID\s+:\s+(\d+)",
             "SN": r"SN\s+:\s+([\w\d]+) \(([\w\d-]+)\)",
             "Description": r"Description\s+:\s+([^\r\n]+)",
             "Line Profile": r"Line profile name\s+:\s+([^\r\n]+)"
         }
-
+        
         # Extract values using regex
         extracted_data = {key: re.search(pattern, output) for key, pattern in patterns.items()}
-
+        
         # Clean up and format extracted data
         final_data = {
+            "status": extracted_data["status"].group(1) if extracted_data["status"] else "Not Found",
             "FSP": extracted_data["F/S/P"].group(1) if extracted_data["F/S/P"] else "Not Found",
             "ONTID": extracted_data["ONT-ID"].group(1) if extracted_data["ONT-ID"] else "Not Found",
             "SN": extracted_data["SN"].group(1) if extracted_data["SN"] else "Not Found",
@@ -132,7 +182,6 @@ def SearchBySN(sn,tn):
             "Description": extracted_data["Description"].group(1).strip() if extracted_data["Description"] else "Not Found",
             "LineProfile": extracted_data["Line Profile"].group(1).strip() if extracted_data["Line Profile"] else "Not Found"
         }
-
         return {
             'status' : "success",
             'device' : final_data

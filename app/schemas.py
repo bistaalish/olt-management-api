@@ -52,8 +52,8 @@ class ShowReseller(BaseModel):
     name: str
     Location: str
     Descriptions: str
-    users: List[ShowResellerUsers] = []
-    devices: List[ShowDeviceReseller] = []
+    # users: List[ShowResellerUsers] = []
+    # devices: List[ShowDeviceReseller] = []
     class Config():
         orm_mode = True
 
@@ -154,17 +154,26 @@ class ShowServiceProfile(BaseModel):
     acs_gemport: str
     acs_vlan: str
 
+class DeviceService(BaseModel):
+    id : int
+    vlan: str
+
 class Autofind(BaseModel):
-    SN: str
+    Number: str
     FSP: str
+    SN: str
     interface: str
     port: str
+    VendorID: str
+    Model: str
+    
 
 class ONUSearchSN(BaseModel):
     sn: str = Field(..., min_length=16, max_length=16)
 
 
 class ONUSearchSNOutput(BaseModel):
+    status: str
     Description: str
     FSP: str
     SN: str
@@ -229,3 +238,13 @@ class DashboardOutput(BaseModel):
     resellerCount: int
     ONUCount: int
     userCount: int
+
+
+class OpticalPowerRequest(BaseModel):
+    FSP: str
+    ONTID: str
+    
+class OpticalPowerResponse(BaseModel):
+    status: str
+    ONU_RX: float
+    OLT_RX: float

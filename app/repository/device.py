@@ -132,3 +132,9 @@ def addONU(id,request: schemas.AddONU,db:Session):
     OutputData['reseller_id'] = device.reseller_id
     AddOuput["data"] = OutputData
     return AddOuput
+
+def CheckONUOptical(id,data,db):
+    device = db.query(models.Device).filter(models.Device.id == id).first()
+    tn = Huawei.TelnetSession(device)
+    outputData = Huawei.getOpticalInfo(tn,data)
+    return outputData

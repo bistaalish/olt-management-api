@@ -69,6 +69,8 @@ class ONUDetails(Base):
     SN = Column(String(255))
     Description = Column(String(255))
     AddedBy = Column(String(255))
+    Rx_OID = Column(String(255))
+    Rx = Column(String(8))
     device_id = Column(Integer, ForeignKey('devices.id'))
     service_id = Column(Integer, ForeignKey('services.id'))
     reseller_id = Column(Integer, ForeignKey('resellers.id'))
