@@ -107,6 +107,7 @@ class DeviceBase(BaseModel):
     type: str
     ip: str
     username: str
+    Ctype : str
     password: str
     reseller_id: int
     SNMP_RO: Optional[str] = None

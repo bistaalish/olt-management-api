@@ -109,8 +109,8 @@ def checkOpticalPower(id,request:schemas.OpticalPowerRequest,db: Session = Depen
 
 @router.delete("/{id}/onu/delete",status_code=status.HTTP_200_OK)
 def deleteONU(id,request:schemas.ONUSearchSN,db:Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
-    DeviceOutput = device.getDevice(id,db)
     UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+    DeviceOutput = device.getDevice(id,db)
     if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
         return device.deleteONU(id,request,db)
     if DeviceOutput.reseller_id == UserInfo.reseller_id:
@@ -139,4 +139,19 @@ def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_us
         onudetails.create(data,db)
         print(data)
         return "Added"
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+
+@router.post('/{id}/onu/reset',status_code=status.HTTP_200_OK)
+def checkOpticalPower(id,request:schemas.OpticalPowerRequest,db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
+    data = {
+        "FSP": request.FSP,
+        "ONTID": request.ONTID,
+    }
+    UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+    DeviceOutput = device.getDevice(id,db)
+    if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
+        return device.resetONU(id,data,db)
+    if DeviceOutput.reseller_id == UserInfo.reseller_id:
+        return device.resetONU(id,data,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)

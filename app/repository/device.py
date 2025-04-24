@@ -24,7 +24,7 @@ def create(request: schemas.Device, db: Session):
     device = db.query(models.Device).filter(models.Device.ip == request.ip).first()
     if device:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Device with this IP already exists")
-    newDevice = models.Device(name=request.name,vendor=request.vendor,model=request.model,type=request.type,ip=request.ip,username=request.username,password=request.password,SNMP_RO=request.SNMP_RO,reseller_id=request.reseller_id)
+    newDevice = models.Device(name=request.name,vendor=request.vendor,model=request.model,type=request.type,ip=request.ip,username=request.username,password=request.password,SNMP_RO=request.SNMP_RO,reseller_id=request.reseller_id,Ctype=request.Ctype)
     db.add(newDevice)
     db.commit()
     db.refresh(newDevice)
@@ -137,4 +137,10 @@ def CheckONUOptical(id,data,db):
     device = db.query(models.Device).filter(models.Device.id == id).first()
     tn = Huawei.TelnetSession(device)
     outputData = Huawei.getOpticalInfo(tn,data)
+    return outputData
+
+def resetONU(id,data,db):
+    device = db.query(models.Device).filter(models.Device.id == id).first()
+    tn = Huawei.TelnetSession(device)
+    outputData = Huawei.resetONU(tn,data)
     return outputData

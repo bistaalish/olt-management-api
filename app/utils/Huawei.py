@@ -92,6 +92,26 @@ def autofind(tn):
             "devices": []
         }
 
+def resetONU(tn,data):
+    try:
+        inte,port = data['FSP'].rsplit("/",1)
+        tn.write(b"interface gpon " + inte.encode('ascii') + b"\n")
+        tn.write(b"ont reset " + port.encode('ascii') + b" " + data['ONTID'].encode('ascii') + b"\n")
+        tn.write(b"y\n")
+        output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
+        print(output)
+        if "Failure: The ONT is not online" in output:
+            raise Exception("ONT is offline")
+        return {
+            'status' : "success",
+            'message' : "ONT Reset Successfully"
+        }
+    except Exception as e:
+        print(f"Error while capturing ONT information: {str(e)}")
+        return {
+            "status": "failed",
+            "message" : str(e)
+        }
 def getOpticalInfo(tn,data):
     try:
         inte,port = data['FSP'].rsplit("/",1)
@@ -226,16 +246,23 @@ def deleteONU(tn,data):
 def AddONU(tn,data):
     try:
         interfaceCMD = "interface gpon " + data['interface'] + "\n"
-        AddCMD = "ont add " + data['port'] +  " sn-auth " + data ['sn'] + " omci ont-lineprofile-id " + data['lineProfileId'] +" ont-srvprofile-id "+ data['serviceProfileId'] + " desc " + data['description'] +"\n"
+        AddCMD = "ont add " + data['port'] +  " sn-auth " + data ['sn'] + " omci ont-lineprofile-id " + data['lineProfileId'] +" ont-srvprofile-id "+ data['serviceProfileId'] + " desc " + data['description'] +"\n\n\n"
         
         tn.write(interfaceCMD.encode('ascii'))
         tn.write(AddCMD.encode('ascii'))
+        tn.write(b"/n/n")
+        time.sleep(1)
         tn.write(b"/n/n")
         output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
         if "Failure: SN already exists" in output:
             raise Exception("SN not added, SN already Exists")
         match = re.search(r"ONTID\s*:(\d+)", output)
-        ontid = match.group(1)
+        match1 = re.search(r"ONTID\s*:\s*(\d+)", output)
+        if match:
+            ontid = match.group(1)
+        if match1:
+            ontid = match1.group(1)
+        print("ontid: ", ontid)
         if data['nativevlan'] == True:
             # Add native VLAN
             NativeVLANCommand = "ont port native-vlan " + data['port'] + " " + ontid + " " + " eth 1 vlan " + data['vlan'] + " priority 0\n\n"

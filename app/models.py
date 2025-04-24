@@ -41,6 +41,7 @@ class Device(Base):
     model = Column(String(255))
     type = Column(String(255))
     ip = Column(String(255), unique=True)
+    Ctype = Column(String(255))
     username = Column(String(255))
     password = Column(String(255))
     SNMP_RO = Column(String(255))
