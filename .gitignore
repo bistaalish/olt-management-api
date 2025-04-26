@@ -5,4 +5,4 @@ app/routes/__pycache__/
 http_logs.log
 .env
 
-*/__pycache__
+*/__pycache__/
