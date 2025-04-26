@@ -31,8 +31,9 @@ class Reseller(ResellerBase):
     users: List[User] = []
 
 class ShowResellerUsers(BaseModel):
+    id: int
     name: str
-    Descriptions: str
+
 
 class ShowUserReseller(BaseModel):
     name: str
@@ -44,16 +45,16 @@ class ShowUserReseller(BaseModel):
 class ShowDeviceReseller(BaseModel):
     id: int
     name: str
-    Location: str
 
 
 class ShowReseller(BaseModel):
     id: int
     name: str
+    phone: str
     Location: str
     Descriptions: str
-    # users: List[ShowResellerUsers] = []
-    # devices: List[ShowDeviceReseller] = []
+    users: List[ShowResellerUsers]
+    devices: List[ShowDeviceReseller]
     class Config():
         orm_mode = True
 
