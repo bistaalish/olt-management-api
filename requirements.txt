@@ -7,4 +7,4 @@ python-jose
 python-multipart
 python-dotenv
 pymysql
-pysnmp
+puresnmp+
