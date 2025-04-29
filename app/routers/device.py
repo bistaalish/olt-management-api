@@ -53,8 +53,10 @@ def delete(id:int, db: Session = Depends(get_db),get_current_user:schemas.Resell
     
 @router.get("/{id}/status",status_code=status.HTTP_200_OK,response_model=schemas.DeviceStatus)
 def checkDevicestatus(id:int, db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
-    return device.deviceStatus(id,db)
-
+    output = device.deviceStatus(id,db)
+    if output["status"] == "offline":
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Offline")
+    return output
 @router.get("/{id}/services",status_code=status.HTTP_200_OK,response_model=List[schemas.DeviceService])
 def getServicesByDevice(id: int, db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
     DeviceOutput = device.getDevice(id,db)
