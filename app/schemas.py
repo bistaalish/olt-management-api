@@ -250,3 +250,7 @@ class OpticalPowerRequest(BaseModel):
 class OpticalPowerResponse(BaseModel):
     status: str
     ONU_RX: float
+
+
+class DeviceStatus(BaseModel):
+    status: str

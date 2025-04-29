@@ -45,3 +45,19 @@ def checkOpticalPowerRx(device,FSP,ontid):
         'ONU_RX' : str(OpticalPowerRx)
     }
 
+def checkDeviceStatus(device):
+    host = device.ip
+    community = device.SNMP_RO
+    OID = "1.3.6.1.2.1.1.3.0"
+    try:
+        DeviceStatus = asyncio.run(asyncio.wait_for(ExecuteSNMP(host, community, OID), timeout=2))
+        if DeviceStatus:
+            return {
+                 "status" : "online"
+            }
+    except asyncio.TimeoutError:
+        print("SNMP request timed out.")
+        return {
+            "status" : "offline"
+        }
+

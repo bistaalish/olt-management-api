@@ -145,3 +145,9 @@ def resetONU(id,data,db):
     tn = Huawei.TelnetSession(device)
     outputData = Huawei.resetONU(tn,data)
     return outputData
+
+def deviceStatus(id,db):
+    device = db.query(models.Device).filter(models.Device.id == id).first()
+    if not device:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Device Not found")
+    return HuaweiSNMP.checkDeviceStatus(device)
