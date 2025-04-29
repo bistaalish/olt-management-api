@@ -26,10 +26,11 @@ def create_user(request: schemas.User,db: Session= Depends(get_db),get_current_u
 
 @router.post("/{user_id}/reset-password", status_code=status.HTTP_200_OK)
 def reset_password(user_id: int,request: schemas.ResetPassword,db: Session= Depends(get_db),get_current_user:schemas.User= Depends(role_required("Admin"))):
+    print(get_current_user.roles)
     if get_current_user.roles == "Admin":
-         raise HTTPException(status_code=403, detail="Cannot reset Admin Password")
-    user.resetPassword(user_id, request, db)
-    return {"message": "Password reset successful"}
+        user.resetPassword(user_id, request, db)
+        return {"message": "Password reset successful"}
+    raise HTTPException(status_code=403, detail="Forbidden")
 
 @router.post("/{user_id}/change_password",status_code=status.HTTP_200_OK)
 def change_password(user_id: int,request: schemas.ChangePassword,db: Session= Depends(get_db),get_current_user: schemas.User = Depends(oauth2.get_current_user)):

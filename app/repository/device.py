@@ -2,8 +2,9 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Depends
 from .. import models,schemas
 from ..hashing import Hash
-from ..utils import Huawei
+from ..utils import Huawei,HuaweiSNMP
 from ..repository import onudetails
+
 def getAll(db:Session):
     devices = db.query(models.Device).all()
     if not devices:
@@ -135,9 +136,9 @@ def addONU(id,request: schemas.AddONU,db:Session):
 
 def CheckONUOptical(id,data,db):
     device = db.query(models.Device).filter(models.Device.id == id).first()
-    tn = Huawei.TelnetSession(device)
-    outputData = Huawei.getOpticalInfo(tn,data)
-    return outputData
+    CheckONUOptical = HuaweiSNMP.checkOpticalPowerRx(device,data['FSP'],data['ONTID'])
+    print(CheckONUOptical)
+    return CheckONUOptical
 
 def resetONU(id,data,db):
     device = db.query(models.Device).filter(models.Device.id == id).first()

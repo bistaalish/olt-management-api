@@ -68,6 +68,7 @@ def updateUser(user_id: int, request: schemas.User, db: Session):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id {user_id} not found")
     user.name = request.name
     user.email = request.email
+    user.reseller_id = request.reseller_id
     # user.password = Hash.bcrypt(request.password)
     user.role_id = request.role_id
     db.commit()

@@ -9,6 +9,7 @@ class UserBase(BaseModel):
     name: str
     email: str
     role_id: int
+    reseller_id: int
 
 class User(UserBase):
     name: str
@@ -249,4 +250,3 @@ class OpticalPowerRequest(BaseModel):
 class OpticalPowerResponse(BaseModel):
     status: str
     ONU_RX: float
-    OLT_RX: float
