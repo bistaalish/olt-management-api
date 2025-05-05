@@ -41,6 +41,7 @@ def checkOpticalPowerRx(device,FSP,ontid):
     generatedOID = "1.3.6.1.4.1.2011.6.128.1.1.2.51.1.4." + str(generatedFSPCode) + "."+str(ontid)
     print(generatedOID)
     OpticalPowerRx = asyncio.run(ExecuteSNMP(host,community,generatedOID))
+    print(OpticalPowerRx)
     return {
         "status" : "success",
         'ONU_RX' : str(OpticalPowerRx)

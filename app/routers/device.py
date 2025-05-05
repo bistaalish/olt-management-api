@@ -5,7 +5,8 @@ from ..database import SessionLocal, get_db
 from sqlalchemy.orm import Session
 from ..repository import device,service,onudetails,user
 from ..middlewares import checkAdmin, role_required
-
+from ..utils import HuaweiSNMP
+import time
 router = APIRouter(
     tags=["Devices"],
     prefix = "/device"
@@ -132,18 +133,21 @@ def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_us
         if AddONUOutput["status"] == "failed":
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
         data["AddedBy"] = get_current_user.email
+        AddONUOutput['data'] = data
         onudetails.create(data,db)
-        print(data)
-        return "Added"
+        print("data:", AddONUOutput)
+        return data
+    
     if DeviceOutput.reseller_id == UserInfo.reseller_id:
         AddONUOutput =  device.addONU(id,request,db)
         data = AddONUOutput['data']
         if AddONUOutput["status"] == "failed":
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
         data["AddedBy"] = get_current_user.email
+        AddONUOutput['data'] = data
         onudetails.create(data,db)
         print(data)
-        return "Added"
+        return data
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 

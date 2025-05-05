@@ -19,6 +19,7 @@ def TelnetSession(device):
         tn.write(password.encode('ascii') + b"\n")
         # time.sleep(1)
         output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
+        print(output)
         if "Username or password invalid." in output:
             raise ValueError("Invalid Username or password")
         
@@ -48,7 +49,7 @@ def autofind(tn):
             else:
                 # Break the loop if the pagination prompt
                 break
-        # print(output)
+        print(output)
         if "Failure: The automatically found ONTs do not exist" in output:
             raise Exception("Failure: The automatically found ONTs do not exist")
         # After capturing all outout, remove an trailing pagintaion prompt
@@ -128,7 +129,7 @@ def getOpticalInfo(tn,data):
             else:
                     # Break the loop if no pagination prompt is found
                 break
-        # print(output)
+        print(output)
         if "Failure: The ONT is not online" in output:
             raise Exception("ONT is offline")
         ONU_RX = None
@@ -172,7 +173,9 @@ def SearchBySN(sn,tn):
                 tn.write(b"\n")
             else:
                     # Break the loop if no pagination prompt is found
+                
                 break
+        print(output)
         if "Parameter error" in output:
             raise Exception("Invalid SN")
         if "The required ONT does not exist" in output:
@@ -227,7 +230,7 @@ def deleteONU(tn,data):
         tn.write(interfaceCMD.encode('ascii'))
         # time.sleep(1)
         tn.write(deleteCMD.encode('ascii'))
-        tn.write(b"quit\n")
+        tn.write(b"quit\n\n")
         output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
         print(output)
         if "Failure: This configured object has some service virtual ports" in output:
@@ -250,12 +253,18 @@ def AddONU(tn,data):
         
         tn.write(interfaceCMD.encode('ascii'))
         tn.write(AddCMD.encode('ascii'))
-        tn.write(b"/n/n")
+        tn.write(b"/n")
         time.sleep(1)
         tn.write(b"/n/n")
         output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
+        print(output)
         if "Failure: SN already exists" in output:
             raise Exception("SN not added, SN already Exists")
+        if "Failure: System is busy, please retry after a while" in output:
+            time.sleep(10)
+            tn.write(b"\n")
+            tn.write(AddCMD.encode('ascii'))
+            tn.write(b"/n")
         match = re.search(r"ONTID\s*:(\d+)", output)
         match1 = re.search(r"ONTID\s*:\s*(\d+)", output)
         if match:
@@ -269,14 +278,14 @@ def AddONU(tn,data):
             tn.write(b"\n")
             tn.write(NativeVLANCommand.encode('ascii'))
             tn.write(b'\n')
-        AddServicePortCMD = "service-port vlan " + data['vlan'] + " gpon " + data['FSP'] + " ont " + ontid + " gemport " + data['gemport'] + " multi-service user-vlan " + data['vlan'] + " tag-transform translate\n"
+        AddServicePortCMD = "service-port vlan " + data['vlan'] + " gpon " + data['FSP'] + " ont " + ontid + " gemport " + data['gemport'] + " multi-service user-vlan " + data['vlan'] + " tag-transform translate\n\n\n"
         quitCMD = "quit \n"
         tn.write(b"\n")
         tn.write(quitCMD.encode('ascii'))
         tn.write(AddServicePortCMD.encode('ascii'))
         tn.write(b'\n')
         if data['acs'] == True:
-            ACSCommand = "service-port vlan " + data['acs_vlan'] + " gpon " + data['FSP'] + " ont " + ontid + " gemport " + data['acs_gemport'] + " multi-service user-vlan " + data['acs_vlan'] + " tag-transform translate\n"
+            ACSCommand = "service-port vlan " + data['acs_vlan'] + " gpon " + data['FSP'] + " ont " + ontid + " gemport " + data['acs_gemport'] + " multi-service user-vlan " + data['acs_vlan'] + " tag-transform translate\n\n\n"
             quitCMD = "quit \n"
             tn.write(b"\n")
             tn.write(ACSCommand.encode('ascii'))
@@ -285,7 +294,8 @@ def AddONU(tn,data):
         print(output)
         data = {
             "SN" : data['sn'],
-            "Description" : data['description']
+            "Description" : data['description'],
+            "ONTID" : ontid
         }
         return {
             "status" : "success",
