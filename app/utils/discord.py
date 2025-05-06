@@ -36,7 +36,7 @@ def sendMessage(webhook_url: str, data: dict) -> bool:
         "color": color,
         "fields": fields,
         "footer": {
-            "text": "Powered by Your Automation Script"
+            "text": "Powered by FirstLink Communications",
         }
     }
 
