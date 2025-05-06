@@ -115,6 +115,7 @@ class DeviceBase(BaseModel):
     password: str
     reseller_id: int
     SNMP_RO: Optional[str] = None
+    discordWebhook: Optional[str] = None
     class Config():
         orm_mode = True
 
