@@ -220,6 +220,7 @@ def deleteONU(tn,data):
    try:
         inte,port = data['FSP'].rsplit("/",1)
         removeServiceProfileCMD = 'undo service-port port ' + data['FSP'] +" ont " + data['ONTID'] + " \n\n"
+        tn.write(b"\n\n")
         tn.write(removeServiceProfileCMD.encode('ascii'))
         tn.write(b"y\n")
         interfaceCMD = "interface gpon " + inte + "\n"
@@ -295,7 +296,9 @@ def AddONU(tn,data):
         data = {
             "SN" : data['sn'],
             "Description" : data['description'],
-            "ONTID" : ontid
+            "FSP" : data['FSP'],
+            "ONTID" : ontid,
+            "vlan" : data['vlan']
         }
         return {
             "status" : "success",

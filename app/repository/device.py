@@ -4,6 +4,7 @@ from .. import models,schemas
 from ..hashing import Hash
 from ..utils import Huawei,HuaweiSNMP
 from ..repository import onudetails
+from ..utils import discord
 
 def getAll(db:Session):
     devices = db.query(models.Device).all()
@@ -25,7 +26,7 @@ def create(request: schemas.Device, db: Session):
     device = db.query(models.Device).filter(models.Device.ip == request.ip).first()
     if device:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Device with this IP already exists")
-    newDevice = models.Device(name=request.name,vendor=request.vendor,model=request.model,type=request.type,ip=request.ip,username=request.username,password=request.password,SNMP_RO=request.SNMP_RO,reseller_id=request.reseller_id,Ctype=request.Ctype)
+    newDevice = models.Device(name=request.name,vendor=request.vendor,model=request.model,type=request.type,ip=request.ip,username=request.username,password=request.password,SNMP_RO=request.SNMP_RO,reseller_id=request.reseller_id,Ctype=request.Ctype,discodrWebhook=request.discordWebhook)
     db.add(newDevice)
     db.commit()
     db.refresh(newDevice)
@@ -104,7 +105,7 @@ def deleteONU(id,request:schemas.ONUSearchSN,db:Session):
     # onudetails.deleteONUEntry(request.sn,db)
     return "deleted"
 
-def addONU(id,request: schemas.AddONU,db:Session):
+def addONU(id,request: schemas.AddONU,db:Session,username:str):
     device = db.query(models.Device).filter(models.Device.id == id).first()
     service = db.query(models.ServiceProfile).filter(models.ServiceProfile.id == request.service_id).first()
     data = {
@@ -128,6 +129,10 @@ def addONU(id,request: schemas.AddONU,db:Session):
         print(AddOuput['error'])
         raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=AddOuput['error'])
     OutputData = AddOuput['data']
+    OutputData['AddedBy'] = username
+    OutputData['Operation'] = "Add"
+    OutputData["OLT_NAME"] = device.name
+    discord.sendMessage(device.discordWebhook, OutputData)
     OutputData["device_id"] = device.id
     OutputData["service_id"] = service.id
     OutputData['reseller_id'] = device.reseller_id

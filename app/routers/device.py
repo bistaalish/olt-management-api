@@ -7,6 +7,7 @@ from ..repository import device,service,onudetails,user
 from ..middlewares import checkAdmin, role_required
 from ..utils import HuaweiSNMP
 import time
+from ..utils import discord
 router = APIRouter(
     tags=["Devices"],
     prefix = "/device"
@@ -128,7 +129,7 @@ def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_us
     DeviceOutput = device.getDevice(id,db)
     UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
     if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
-        AddONUOutput =  device.addONU(id,request,db)
+        AddONUOutput =  device.addONU(id,request,db,get_current_user.email)
         data = AddONUOutput['data']
         if AddONUOutput["status"] == "failed":
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
@@ -136,10 +137,11 @@ def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_us
         AddONUOutput['data'] = data
         onudetails.create(data,db)
         print("data:", AddONUOutput)
+
         return data
     
     if DeviceOutput.reseller_id == UserInfo.reseller_id:
-        AddONUOutput =  device.addONU(id,request,db)
+        AddONUOutput =  device.addONU(id,request,db,get_current_user.email)
         data = AddONUOutput['data']
         if AddONUOutput["status"] == "failed":
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)

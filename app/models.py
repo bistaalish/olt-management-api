@@ -34,7 +34,6 @@ class User(Base):
 
 class Device(Base):
     __tablename__ = "devices"
-
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255))
     vendor = Column(String(255))
@@ -48,6 +47,7 @@ class Device(Base):
     reseller_id = Column(Integer, ForeignKey('resellers.id'))
     reseller = relationship("Reseller", back_populates="devices")
     serviceprofiles = relationship("ServiceProfile", back_populates="device")
+    discordWebhook = Column(String(255))
     
 class ServiceProfile(Base):
     __tablename__ = "services"
