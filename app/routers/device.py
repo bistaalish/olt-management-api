@@ -119,9 +119,9 @@ def deleteONU(id,request:schemas.ONUSearchSN,db:Session = Depends(get_db),get_cu
     UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
     DeviceOutput = device.getDevice(id,db)
     if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
-        return device.deleteONU(id,request,db)
+        return device.deleteONU(id,request,db,get_current_user.email)
     if DeviceOutput.reseller_id == UserInfo.reseller_id:
-        return device.deleteONU(id,request,db)
+        return device.deleteONU(id,request,db,get_current_user.email)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
 @router.post("/{id}/onu/add",status_code=status.HTTP_201_CREATED)
