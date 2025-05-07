@@ -56,7 +56,6 @@ class ShowReseller(BaseModel):
     Descriptions: str
     users: List[ShowResellerUsers]
     devices: List[ShowDeviceReseller]
-    discordWebhook: Optional[str]
     class Config():
         orm_mode = True
 
