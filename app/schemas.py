@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator, ValidationError,Field
-from typing import List, Optional
+from typing import List, Optional,Dict
 
 class Role(BaseModel):
     id: int
@@ -163,14 +163,11 @@ class DeviceService(BaseModel):
     id : int
     vlan: str
 
-class Autofind(BaseModel):
-    Number: str
-    FSP: str
-    SN: str
-    interface: str
-    port: str
-    VendorID: str
-    Model: str
+class AutofindData(BaseModel):
+    fsp: str
+    sn : str
+    vendorsn : str
+
     
 
 class ONUSearchSN(BaseModel):

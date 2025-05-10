@@ -69,7 +69,7 @@ def getServicesByDevice(id: int, db: Session = Depends(get_db),get_current_user:
         return service.getServicesByDevice(id,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
-@router.get("/{id}/onu/autofind", status_code=status.HTTP_200_OK,response_model=List[schemas.Autofind])
+@router.get("/{id}/onu/autofind", status_code=status.HTTP_200_OK,response_model=List[schemas.AutofindData])
 def findONU(id:int,db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
     DeviceOutput = device.getDevice(id,db)
     UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()

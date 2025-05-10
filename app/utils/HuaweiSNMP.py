@@ -93,10 +93,8 @@ def checkDeviceStatus(device):
 
 def RunAutofind(device):
     print(device)
-    # host = device.ip
-    # community = device.SNMP_RO
-    host = device["ip"]
-    community = device["SNMP_RO"]
+    host = device.ip
+    community = device.SNMP_RO
     # OID = "1.3.6.1.2.1.1.3.0"
     OID = ".1.3.6.1.4.1.2011.6.128.1.1.2.52.1.2"
     try:
