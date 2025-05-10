@@ -1,5 +1,9 @@
 import requests
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
+APP_NAME = os.getenv("APP_NAME")
 def sendMessage(webhook_url: str, data: dict) -> bool:
     """
     Sends a Discord embed message via webhook based on provided data.
@@ -36,7 +40,7 @@ def sendMessage(webhook_url: str, data: dict) -> bool:
         "color": color,
         "fields": fields,
         "footer": {
-            "text": "Powered by FirstLink Communications PON Management System",
+            "text": f"Powered by {APP_NAME}",
         }
     }
 
