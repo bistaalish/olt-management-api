@@ -168,6 +168,11 @@ def SearchBySN(sn,tn):
             # Read the output from the command
             chunk = tn.read_until(b"---- More ( Press 'Q' to break ) ----", timeout=10).decode('ascii')
             output += chunk
+            if "TR069" in chunk:
+                tn.write(b"Q\n")
+                time.sleep(1)
+                tn.write(b"q\n\n")
+                break
             if "---- More ( Press 'Q' to break ) ----" in chunk:
             # If the pagination prompt is found, send newlines to get more output
                 tn.write(b"\n")
@@ -251,21 +256,25 @@ def AddONU(tn,data):
     try:
         interfaceCMD = "interface gpon " + data['interface'] + "\n"
         AddCMD = "ont add " + data['port'] +  " sn-auth " + data ['sn'] + " omci ont-lineprofile-id " + data['lineProfileId'] +" ont-srvprofile-id "+ data['serviceProfileId'] + " desc " + data['description'] +"\n\n\n"
-        
+        tn.write(b"/n")
+        output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
+        print(output)
         tn.write(interfaceCMD.encode('ascii'))
+        time.sleep(1)
         tn.write(AddCMD.encode('ascii'))
         tn.write(b"/n")
-        time.sleep(1)
         tn.write(b"/n/n")
         output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
         print(output)
         if "Failure: SN already exists" in output:
             raise Exception("SN not added, SN already Exists")
         if "Failure: System is busy, please retry after a while" in output:
-            time.sleep(10)
+            time.sleep(5)
             tn.write(b"\n")
             tn.write(AddCMD.encode('ascii'))
-            tn.write(b"/n")
+            tn.write(b"\n")
+            output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
+            print(output)
         match = re.search(r"ONTID\s*:(\d+)", output)
         match1 = re.search(r"ONTID\s*:\s*(\d+)", output)
         if match:

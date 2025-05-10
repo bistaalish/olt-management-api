@@ -90,14 +90,12 @@ def SearchONUByDesc(id:int,request,db:Session):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{request.description} not Found in Provided OLT")
     return SearchOutput["device"]
 
-def deleteONU(id,request:schemas.ONUSearchSN,db:Session,username:str):
+def deleteONU(id,request:schemas.ONUSearchSNOutput,db:Session,username:str):
+    data = request.dict()
     device = db.query(models.Device).filter(models.Device.id == id).first()
     tn = Huawei.TelnetSession(device)
-    SearchOutput = Huawei.SearchBySN(request.sn,tn)
-    if (SearchOutput['status'] == "failed"):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{request.sn} not Found in Provided OLT")
-    DeleteOutput = Huawei.deleteONU(tn,SearchOutput['device'])
-    RouterDetails = SearchOutput['device']
+    DeleteOutput = Huawei.deleteONU(tn,data)
+    RouterDetails = data
     RouterDetails['AddedBy'] = username
     RouterDetails['Operation'] = "Delete"
     RouterDetails['OLT_NAME'] = device.name

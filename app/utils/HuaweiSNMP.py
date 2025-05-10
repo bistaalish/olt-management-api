@@ -7,7 +7,6 @@ import asyncio
 async def ExecuteSNMP(host,community,oid):
    client = PyWrapper(Client(host, V2C(community)))
    output = await client.get(oid)
-   output = output / 100
    return output
 
 
@@ -42,9 +41,10 @@ def checkOpticalPowerRx(device,FSP,ontid):
     print(generatedOID)
     OpticalPowerRx = asyncio.run(ExecuteSNMP(host,community,generatedOID))
     print(OpticalPowerRx)
+    output = OpticalPowerRx / 100
     return {
         "status" : "success",
-        'ONU_RX' : str(OpticalPowerRx)
+        'ONU_RX' : str(output)
     }
 
 def checkDeviceStatus(device):
