@@ -256,9 +256,6 @@ def AddONU(tn,data):
     try:
         interfaceCMD = "interface gpon " + data['interface'] + "\n"
         AddCMD = "ont add " + data['port'] +  " sn-auth " + data ['sn'] + " omci ont-lineprofile-id " + data['lineProfileId'] +" ont-srvprofile-id "+ data['serviceProfileId'] + " desc " + data['description'] +"\n\n\n"
-        tn.write(b"/n")
-        output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
-        print(output)
         tn.write(interfaceCMD.encode('ascii'))
         time.sleep(1)
         tn.write(AddCMD.encode('ascii'))
