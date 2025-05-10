@@ -5,11 +5,27 @@ import asyncio
 # # OID you want to GET or SET
 # oid = "1.3.6.1.4.1.2011.6.128.1.1.2.51.1.4.4194312448.0"  # sysName
 async def ExecuteSNMP(host,community,oid):
-   client = PyWrapper(Client(host, V2C(community)))
-   output = await client.get(oid)
+   client = PyWrapper.walk(Client(host, V2C(community)))
+   output = await client(oid)
    return output
 
 
+async def Walk(host, community, oid):
+    client = PyWrapper(Client(host, V2C(community)))
+    AutofindData = []
+    async for oid_str, value in client.walk(oid):
+        # print(f"[{oid_str}:{value.hex().upper()}]")
+        SN = value.hex().upper()
+        oid_str = oid_str.split(".")
+        FSP = decode_fsp(int(oid_str[-2]))
+        vendorID = bytes.fromhex(SN[:8])
+        vendorSN = f"{vendorID.decode()}-{SN[8:]}"
+        AutofindData.append({
+            "fsp": FSP,
+            "vendorsn": vendorSN,
+            "sn": SN
+        })
+    return AutofindData
 
 def encode_fsp(frame: int, slot: int, port: int) -> int:
     """
@@ -19,6 +35,17 @@ def encode_fsp(frame: int, slot: int, port: int) -> int:
     inital_value = 4194312192
     encodedFSP = inital_value + ((slot-1) * 8192) + (port * 256)
     return encodedFSP
+
+def decode_fsp(encodedFSP: int) -> tuple:
+    """
+    Decode SNMP ifIndex back to Huawei OLT Frame/Slot/Port (F/S/P).
+    """
+    inital_value = 4194312192
+    offset = encodedFSP - inital_value
+    slot = (offset // 8192) + 1
+    port = (offset % 8192) // 256
+    FSP = f"0/{slot}/{port}"
+    return (FSP)  # Frame is ignored in single-chassis OLTs
 
 def splitFSP(FSP):
     return FSP.split('/')
@@ -61,5 +88,31 @@ def checkDeviceStatus(device):
         print("SNMP request timed out.")
         return {
             "status" : "offline"
+        }
+
+
+def RunAutofind(device):
+    print(device)
+    # host = device.ip
+    # community = device.SNMP_RO
+    host = device["ip"]
+    community = device["SNMP_RO"]
+    # OID = "1.3.6.1.2.1.1.3.0"
+    OID = ".1.3.6.1.4.1.2011.6.128.1.1.2.52.1.2"
+    try:
+        AutofindData = asyncio.run(asyncio.wait_for(Walk(host, community, OID), timeout=10))
+        status = "success" if AutofindData else "failed"
+        message = "No data found" if status == "failed" else "Data found"
+        return {
+            "status" : status,
+            "message" : message,
+            "data" : AutofindData
+        }
+    except asyncio.TimeoutError:
+        print("SNMP request timed out.")
+        return {
+            "status" : "failed",
+            "message" : "SNMP request timed out.",
+            "data" : []
         }
 

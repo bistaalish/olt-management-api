@@ -6,3 +6,4 @@ http_logs.log
 .env
 
 */__pycache__/
+HuaweiSSH.py
