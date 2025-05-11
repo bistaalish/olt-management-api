@@ -167,6 +167,7 @@ class AutofindData(BaseModel):
     fsp: str
     sn : str
     vendorsn : str
+    vendorid : str
 
     
 

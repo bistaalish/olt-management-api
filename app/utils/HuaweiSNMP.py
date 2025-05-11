@@ -22,8 +22,10 @@ async def Walk(host, community, oid):
         vendorSN = f"{vendorID.decode()}-{SN[8:]}"
         AutofindData.append({
             "fsp": FSP,
+            "sn": SN,
             "vendorsn": vendorSN,
-            "sn": SN
+            "vendorid": vendorID,
+        
         })
     return AutofindData
 
