@@ -182,7 +182,6 @@ class ONUSearchSNOutput(BaseModel):
     SN: str
     ONTID: str
     VendorSN: str
-    LineProfile: str
 
 class AddONU(BaseModel):
     SN : str
