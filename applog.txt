@@ -1,0 +1,196 @@
+INFO:     Will watch for changes in these directories: ['/home/alish/olt-management-api']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [159535] using StatReload
+/home/alish/olt-management-api/.venv/lib/python3.8/site-packages/pydantic/_internal/_config.py:345: UserWarning: Valid config keys have changed in V2:
+* 'orm_mode' has been renamed to 'from_attributes'
+  warnings.warn(message, UserWarning)
+INFO:     Started server process [159556]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+mysql+pymysql://myuser:mypassword@127.0.0.1:3306/PON_Firstlink
+{'sub': 'admin@example.com', 'roles': 'Admin', 'exp': 1754526522}
+Admin
+INFO:     172.17.0.2:48456 - "GET /device/ HTTP/1.1" 200 OK
+{'sub': 'admin@example.com', 'roles': 'Admin', 'exp': 1754526522}
+Admin
+{'sub': 'admin@example.com', 'roles': 'Admin', 'exp': 1754526522}
+Admin
+INFO:     172.17.0.2:48456 - "GET /device/2/status HTTP/1.1" 200 OK
+INFO:     172.17.0.2:48460 - "GET /device/1/status HTTP/1.1" 200 OK
+{'sub': 'admin@example.com', 'roles': 'Admin', 'exp': 1754526522}
+Admin
+INFO:     172.17.0.2:48460 - "GET /device/3/status HTTP/1.1" 200 OK
+{'sub': 'admin@example.com', 'roles': 'Admin', 'exp': 1754526522}
+Admin
+10.10.0.14
+appuser admin123!
+Huawei Integrated Access Software (MA5683T).
+  Copyright(C) Huawei Technologies Co., Ltd. 2002-2014. All rights reserved.
+
+  -----------------------------------------------------------------------------
+  User last login information:
+  -----------------------------------------------------------------------------
+  Access Type : Telnet 
+  IP-Address  : 103.153.196.58
+  Login  Time : 2158-02-26 16:49:25+08:00
+  Logout Time : 2158-02-26 16:50:43+08:00
+  -----------------------------------------------------------------------------
+
+kapurkot_olt>
+enable
+
+kapurkot_olt#config
+
+kapurkot_olt(config)#display ont info by-sn 485754432B7C3521
+  -----------------------------------------------------------------------------
+  F/S/P                   : 0/1/0
+  ONT-ID                  : 0
+  Control flag            : active
+  Run state               : online
+  Config state            : normal
+  Match state             : match
+  DBA type                : SR
+  ONT distance(m)         : 5934
+  ONT battery state       : not support
+  Memory occupation       : 18%
+  CPU occupation          : 1%
+  Temperature             : 52(C)
+  Authentic type          : SN-auth
+  SN                      : 485754432B7C3521 (HWTC-2B7C3521)
+  Management mode         : OMCI
+  Software work mode      : normal
+  Isolation state         : normal
+  ONT IP 0 address/mask   : -
+  Description             : 100
+  Last down cause         : dying-gasp
+  Last up time            : 2158-02-26 16:38:35+08:00
+  Last down time          : 2158-02-26 16:23:27+08:00
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Last dying gasp time    : 2158-02-26 16:23:27+08:00
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ONT online duration     : 0 day(s), 0 hour(s), 14 minute(s), 57 second(s) 
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Type C support          : Not support
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Interoperability-mode   : ITU-T
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  VoIP configure method   : Default
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Line profile ID      : 10
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Line profile name    : PPOE
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  FEC upstream switch :Disable
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  OMCC encrypt switch :Off
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Qos mode            :PQ
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Mapping mode        :VLAN
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  TR069 management    :Disable
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  TR069 IP index      :0
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Notes: * indicates Discrete TCONT(TCONT Unbound)
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  <T-CONT   0>          DBA Profile-ID:1
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  <T-CONT   1>          DBA Profile-ID:10
+---- More ( Press 'Q' to break ) ----[37D                                     [37D   <Gem Index 1>
+---- More ( Press 'Q' to break ) ----[37D                                     [37D   --------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D   |Serv-Type:ETH |Encrypt:off |Cascade:off |GEM-CAR:-            |
+---- More ( Press 'Q' to break ) ----[37D                                     [37D   |Upstream-priority-queue:0  |Downstream-priority-queue:-       |
+---- More ( Press 'Q' to break ) ----[37D                                     [37D   --------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D    Mapping VLAN  Priority Port    Port  Bundle  Flow  Transparent
+---- More ( Press 'Q' to break ) ----[37D                                     [37D    index                  type    ID    ID      CAR   
+---- More ( Press 'Q' to break ) ----[37D                                     [37D   --------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D    1       100   -        -       -     -       -     -          
+---- More ( Press 'Q' to break ) ----[37D                                     [37D   --------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Notes: Run the display traffic table ip command to query 
+---- More ( Press 'Q' to break ) ----[37D                                     [37D         traffic table configuration
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Service profile ID   : 10
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Service profile name : FIBERHOME
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Port-type     Port-number
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  POTS          adaptive
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH           adaptive
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  VDSL          0
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  TDM           0
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  MOCA          0
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  CATV          0
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  TDM port type                     : E1
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  TDM service type                  : TDMoGem
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  MAC learning function switch      : Enable
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ONT transparent function switch   : Disable
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Ring check switch                 : Disable
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Ring port auto-shutdown           : Enable
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Ring detect frequency             : 8 (pps)
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Ring resume interval              : 300 (s)
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Multicast forward mode            : Unconcern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Multicast forward VLAN            : -
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Multicast mode                    : Unconcern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Upstream IGMP packet forward mode : Unconcern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Upstream IGMP packet forward VLAN : -
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Upstream IGMP packet priority     : -
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Native VLAN option                : Concern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Upstream PQ color policy          : -
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Downstream PQ color policy        : -
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Port-type Port-ID QinQmode  PriorityPolicy Inbound     Outbound
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       1       unconcern unconcern      unconcern   unconcern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       2       unconcern unconcern      unconcern   unconcern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       3       unconcern unconcern      unconcern   unconcern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       4       unconcern unconcern      unconcern   unconcern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       5       unconcern unconcern      unconcern   unconcern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       6       unconcern unconcern      unconcern   unconcern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       7       unconcern unconcern      unconcern   unconcern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       8       unconcern unconcern      unconcern   unconcern
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Notes: * indicates the discretely configured traffic profile,
+---- More ( Press 'Q' to break ) ----[37D                                     [37D         run the display traffic table ip command to query
+---- More ( Press 'Q' to break ) ----[37D                                     [37D         traffic table configuration.
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Port-type Port-ID  DownstreamMode  MismatchPolicy
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH             1  operation       discard       
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH             2  operation       discard       
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH             3  operation       discard       
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH             4  operation       discard       
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH             5  operation       discard       
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH             6  operation       discard       
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH             7  operation       discard       
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH             8  operation       discard       
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Port-type Port-ID Dscp-mapping-table-index
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       1       0        
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       2       0        
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       3       0        
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       4       0        
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       5       0        
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       6       0        
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       7       0        
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH       8       0        
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  IPHOST    1       0        
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Port-type  Port-ID    IGMP-mode         IGMP-VLAN  IGMP-PRI  Max-MAC-Count
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH              1    -                         -         -      Unlimited
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH              2    -                         -         -      Unlimited
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH              3    -                         -         -      Unlimited
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH              4    -                         -         -      Unlimited
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH              5    -                         -         -      Unlimited
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH              6    -                         -         -      Unlimited
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH              7    -                         -         -      Unlimited
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  ETH              8    -                         -         -      Unlimited
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Alarm policy profile ID      : 0
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  Alarm policy profile name    : alarm-policy_0
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  The number of required ONTs     : 1
+---- More ( Press 'Q' to break ) ----[37D                                     [37D  -----------------------------------------------------------------------------
+
+kapurkot_olt(config)#
+INFO:     172.17.0.2:35810 - "POST /device/1/onu/search/sn HTTP/1.1" 200 OK
+{'sub': 'admin@example.com', 'roles': 'Admin', 'exp': 1754526522}
+Admin
+1.3.6.1.4.1.2011.6.128.1.1.2.51.1.4.4194312192.0
+-1844
+{'status': 'success', 'ONU_RX': '-18.44'}
+INFO:     172.17.0.2:35810 - "POST /device/1/onu/optical HTTP/1.1" 200 OK

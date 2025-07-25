@@ -1,6 +1,12 @@
 from pydantic import BaseModel, field_validator, ValidationError,Field
 from typing import List, Optional
 
+class AutofindData(BaseModel):
+    FSP: str
+    SN : str
+#    vendorsn : str
+#    vendorid : str
+
 class Role(BaseModel):
     id: int
     name: str
@@ -56,7 +62,7 @@ class ShowReseller(BaseModel):
     Descriptions: str
     users: List[ShowResellerUsers]
     devices: List[ShowDeviceReseller]
-    discordWebhook: Optional[str]
+
     class Config():
         orm_mode = True
 
@@ -175,7 +181,7 @@ class Autofind(BaseModel):
     
 
 class ONUSearchSN(BaseModel):
-    sn: str = Field(..., min_length=16, max_length=16)
+    sn: str
 
 
 class ONUSearchSNOutput(BaseModel):

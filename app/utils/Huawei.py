@@ -12,6 +12,7 @@ def TelnetSession(device):
         username = device.username
         password = device.password
         port = 23
+        print(username,password)
         tn = telnetlib.Telnet(host, port,timeout=60)
         tn.read_until(b">>User name:", timeout=5).decode('ascii').strip()
         tn.write(username.encode('ascii') + b"\n")
