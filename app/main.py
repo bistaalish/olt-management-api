@@ -16,13 +16,15 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-
+# Ensure the logs directory exists
+log_dir = "/app/logs"
+os.makedirs(log_dir, exist_ok=True)
 # Define allowed origins
 
 app = FastAPI()
 # Configure Logging
 logging.basicConfig(
-    filename="http_logs.log",  # Save logs to a file
+    filename="/app/logs/http_logs.log",  # Save logs to a file
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
