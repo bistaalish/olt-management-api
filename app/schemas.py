@@ -184,6 +184,10 @@ class ONUSearchSN(BaseModel):
     sn: str
 
 
+class DeleteONU(BaseModel):
+    FSP: str
+    ONTID: str
+
 class ONUSearchSNOutput(BaseModel):
     status: str
     Description: str

@@ -235,6 +235,8 @@ def deleteONU(tn,data):
         tn.write(b"quit\n\n")
         output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
         print(output)
+        if "Failure: The ONT does not exist" in output:
+            raise Exception("ONU Doesnot Exists")
         if "Failure: This configured object has some service virtual ports" in output:
            raise Exception("Virtual Port Not deleted")
         if " Number of ONTs that can be deleted: 1, success: 1" in output:

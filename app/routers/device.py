@@ -115,7 +115,7 @@ def checkOpticalPower(id,request:schemas.OpticalPowerRequest,db: Session = Depen
 
 
 @router.delete("/{id}/onu/delete",status_code=status.HTTP_200_OK)
-def deleteONU(id,request:schemas.ONUSearchSN,db:Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
+def deleteONU(id,request:schemas.DeleteONU,db:Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
     UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
     DeviceOutput = device.getDevice(id,db)
     if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
