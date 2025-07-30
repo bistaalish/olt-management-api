@@ -106,22 +106,21 @@ def deleteONU(id,request:schemas.DeleteONU,db:Session,username:str):
     tn = Huawei.TelnetSession(device)
     Data = {
         "FSP" : request.FSP,
-        "ONTID": request.ONTID
+        "ONTID": request.ONTID,
+        "SN" : request.SN,
+        "Description" : request.Description,
     }
     print(request)
-    # SearchOutput = Huawei.SearchBySN(request.sn,tn)
-    # if (SearchOutput['status'] == "failed"):
-        # raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{request.sn} not Found in Provided OLT")
     DeleteOutput = Huawei.deleteONU(tn,Data)
     # RouterDetails = SearchOutput['device']
-    # RouterDetails['AddedBy'] = username
-    # RouterDetails['Operation'] = "Delete"
-    # RouterDetails['OLT_NAME'] = device.name
+    Data['AddedBy'] = username
+    Data['Operation'] = "Delete"
+    Data['OLT_NAME'] = device.name
     print(DeleteOutput)
     if DeleteOutput['status'] == 'failed':
         print(DeleteOutput['error'])
         raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=DeleteOutput['error'])
-    # discord.sendMessage(device.discordWebhook, RouterDetails)
+    discord.sendMessage(device.discordWebhook, Data)
     return "deleted"
 
 def addONU(id,request: schemas.AddONU,db:Session,username:str):
