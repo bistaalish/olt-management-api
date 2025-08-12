@@ -120,7 +120,8 @@ def deleteONU(id,request:schemas.DeleteONU,db:Session,username:str):
     if DeleteOutput['status'] == 'failed':
         print(DeleteOutput['error'])
         raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=DeleteOutput['error'])
-    discord.sendMessage(device.discordWebhook, Data)
+    if device.discordWebhook and device.discordWebhook != "":
+        discord.sendMessage(device.discordWebhook, Data)
     return "deleted"
 
 def addONU(id,request: schemas.AddONU,db:Session,username:str):
@@ -150,7 +151,8 @@ def addONU(id,request: schemas.AddONU,db:Session,username:str):
     OutputData['AddedBy'] = username
     OutputData['Operation'] = "Add"
     OutputData["OLT_NAME"] = device.name
-    discord.sendMessage(device.discordWebhook, OutputData)
+    if device.discordWebhook and device.discordWebhook != "":
+        discord.sendMessage(device.discordWebhook, OutputData)
     OutputData["device_id"] = device.id
     OutputData["service_id"] = service.id
     OutputData['reseller_id'] = device.reseller_id
