@@ -172,6 +172,10 @@ def SearchBySN(sn,tn):
             if "---- More ( Press 'Q' to break ) ----" in chunk:
             # If the pagination prompt is found, send newlines to get more output
                 tn.write(b"\n")
+            if "FEC upstream switch" in chunk:
+                # If the pagination prompt is found, send newlines to get more output
+                tn.write(b"q\n")
+                break
             else:
                     # Break the loop if no pagination prompt is found
                 
