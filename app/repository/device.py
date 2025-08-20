@@ -77,7 +77,7 @@ def findONU(id: int,db:Session):
     device = db.query(models.Device).filter(models.Device.id == id).first()
     if not device:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Device with id {id} not found")
-    if device.vendor == "huawei":
+    if device.vendor.lower() == "huawei":
         autofindResults = HuaweiSNMP.RunAutofind(device)
         print(autofindResults)
         if autofindResults["status"] == "failed":

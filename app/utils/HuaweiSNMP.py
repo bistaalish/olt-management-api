@@ -32,6 +32,7 @@ async def Walk(host, community, oid):
             "vendorid": vendorID,
         
         })
+        print(AutofindData)
     return AutofindData
 
 def encode_fsp(frame: int, slot: int, port: int) -> int:
