@@ -169,13 +169,9 @@ def SearchBySN(sn,tn):
             # Read the output from the command
             chunk = tn.read_until(b"---- More ( Press 'Q' to break ) ----", timeout=10).decode('ascii')
             output += chunk
-            if "---- More ( Press 'Q' to break ) ----" in chunk:
+            if "---- More ( Press 'Q' to break ) ----" in chunk and "FEC upstream switch" not in chunk:
             # If the pagination prompt is found, send newlines to get more output
                 tn.write(b"\n")
-            if "FEC upstream switch" in chunk:
-                # If the pagination prompt is found, send newlines to get more output
-                tn.write(b"q\n")
-                break
             else:
                     # Break the loop if no pagination prompt is found
                 
