@@ -174,7 +174,7 @@ def SearchBySN(sn,tn):
                 tn.write(b"\n")
             else:
                     # Break the loop if no pagination prompt is found
-                
+                tn.write(b"q\n\n")
                 break
         print(output)
         if "Parameter error" in output:
