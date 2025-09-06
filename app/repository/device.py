@@ -176,3 +176,56 @@ def deviceStatus(id,db):
     if not device:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Device Not found")
     return HuaweiSNMP.checkDeviceStatus(device)
+
+def modifyONUByDescription(id,request:schemas.ONUModify,db:Session,username:str):
+    device = db.query(models.Device).filter(models.Device.id == id).first()
+    tn = Huawei.TelnetSession(device)
+    modifyData = {
+        "FSP" : request.FSP,
+        "ONTID": request.ONTID,
+        "Description" : request.Description    
+        }
+    print(modifyData)
+    ModifyOutput = Huawei.modifyONUByDescription(tn,modifyData)
+    if ModifyOutput['status'] == 'failed':
+        print(ModifyOutput['error'])
+        raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=ModifyOutput['error'])
+    return ModifyOutput
+
+def modifyONUBySN(id,request:schemas.ONUModify,db:Session,username:str):
+    device = db.query(models.Device).filter(models.Device.id == id).first()
+    tn = Huawei.TelnetSession(device)
+    modifyData = {
+        "FSP" : request.FSP,
+        "ONTID": request.ONTID,
+        "SN" : request.SN    
+        }
+    print(modifyData)
+    ModifyOutput = Huawei.modifyONUBySN(tn,modifyData)
+    if ModifyOutput['status'] == 'failed':
+        print(ModifyOutput['error'])
+        raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=ModifyOutput['error'])
+    return ModifyOutput
+
+def modifyONUByServiceId(id,request:schemas.ONUModify,db:Session,username:str):
+    device = db.query(models.Device).filter(models.Device.id == id).first()
+    service = db.query(models.ServiceProfile).filter(models.ServiceProfile.id == request.service_id).first()
+    print(service.name)
+    tn = Huawei.TelnetSession(device)
+    modifyData = {
+        "FSP" : request.FSP,
+        "ONTID": request.ONTID,
+        "vlan" : service.vlan,
+        "gemport"  : service.gemport,
+        "serviceProfileId" : service.serviceprofile_id,
+        "lineProfileId" : service.lineprofile_id,
+        "acs" : service.acs,
+        "acs_gemport" : service.acs_gemport,
+        "acs_vlan" : service.acs_vlan
+    }
+    print(modifyData)
+    ModifyOutput = Huawei.modifyONUByServiceId(tn,modifyData,db)
+    if ModifyOutput['status'] == 'failed':
+        print(ModifyOutput['error'])
+        raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=ModifyOutput['error'])
+    return ModifyOutput

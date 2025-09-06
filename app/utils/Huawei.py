@@ -382,3 +382,100 @@ def searchByDesc(desc,tn):
         return {
             "status" : "failed"
         }
+
+def modifyONUByDescription(tn,data):
+    try:
+        interfaceCMD = "interface gpon " + data['FSP'].rsplit("/",1)[0] + "\n"
+        modifyCMD = "ont modify " + data['FSP'].rsplit("/",1)[1] +  " " + data ['ONTID'] + " desc " + data['Description']
+        modifyCMD += "\n\n\n"
+        tn.write(interfaceCMD.encode('ascii'))
+        tn.write(modifyCMD.encode('ascii'))
+        tn.write(b"/n")
+        time.sleep(1)
+        tn.write(b"/n/n")
+        output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
+        print(output)
+        if "Failure: The ONT does not exist" in output:
+            raise Exception("ONT Doesnot Exists")
+        if "Failure: Parameter error" in output:
+            raise Exception("Parameter Error")
+        return {
+            "status" : "success",
+            "message" : "ONT Modified Successfully"
+        }
+    except Exception as e:
+        return {
+            "status": "failed",
+            "error" : str(e)
+        }
+
+def modifyONUBySN(tn,data):
+    try:
+        interfaceCMD = "interface gpon " + data['FSP'].rsplit("/",1)[0] + "\n"
+        modifyCMD = "ont modify " + data['FSP'].rsplit("/",1)[1] +  " " + data ['ONTID'] + " sn " + data['SN']
+        modifyCMD += "\n\n\n"
+        tn.write(interfaceCMD.encode('ascii'))
+        tn.write(modifyCMD.encode('ascii'))
+        tn.write(b"/n")
+        time.sleep(1)
+        tn.write(b"/n/n")
+        output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
+        print(output)
+        if "Failure: The ONT does not exist" in output:
+            raise Exception("ONT Doesnot Exists")
+        if "Failure: Parameter error" in output:
+            raise Exception("Parameter Error")
+        return {
+            "status" : "success",
+            "message" : "ONT Modified Successfully"
+        }
+    except Exception as e:
+        return {
+            "status": "failed",
+            "error" : str(e)
+        }
+
+def modifyONUByServiceId(tn,data,db: Session):
+    try:
+        # service = db.query(models.ServiceProfile).filter(models.ServiceProfile.id == data['service_id']).first()
+        # if not service:
+        #     raise Exception("Service Profile Not Found")
+        removeServiceProfileCMD = 'undo service-port port ' + data['FSP'] +" ont " + data['ONTID'] + " \n\n"
+        tn.write(b"\n\n")
+        tn.write(removeServiceProfileCMD.encode('ascii'))
+        tn.write(b"y\n")
+        interfaceCMD = "interface gpon " + data['FSP'].rsplit("/",1)[0] + "\n"
+        modifyCMD = "ont modify " + data['FSP'].rsplit("/",1)[1] +  " " + data ['ONTID'] + " ont-lineprofile-id " + str(data['lineProfileId']) +" ont-srvprofile-id "+ str(data['serviceProfileId'])
+        modifyCMD += "\n\n\n"
+        tn.write(interfaceCMD.encode('ascii'))
+        tn.write(modifyCMD.encode('ascii'))
+        tn.write(b"/n")
+        time.sleep(1)
+        tn.write(b"/n/n")
+        AddServicePortCMD = "service-port vlan " + data['vlan'] + " gpon " + data['FSP'] + " ont " + data['ONTID'] + " gemport " + data['gemport'] + " multi-service user-vlan " + data['vlan'] + " tag-transform translate\n\n\n"
+        quitCMD = "quit \n"
+        tn.write(b"\n")
+        tn.write(quitCMD.encode('ascii'))
+        tn.write(AddServicePortCMD.encode('ascii'))
+        tn.write(b'\n')
+        if data['acs'] == True:
+            ACSCommand = "service-port vlan " + data['acs_vlan'] + " gpon " + data['FSP'] + " ont " + data['ONTID'] + " gemport " + data['acs_gemport'] + " multi-service user-vlan " + data['acs_vlan'] + " tag-transform translate\n\n\n"
+            quitCMD = "quit \n"
+            tn.write(b"\n")
+            tn.write(ACSCommand.encode('ascii'))
+            tn.write(b'\n')
+        output = tn.read_until(b">>", timeout=5).decode('ascii').strip()
+        print(output)
+        if "Failure: The ONT does not exist" in output:
+            raise Exception("ONT Doesnot Exists")
+        if "Failure: Parameter error" in output:
+            raise Exception("Parameter Error")
+        return {
+            "status" : "success",
+            "message" : "ONT Modified Successfully"
+        }
+    except Exception as e:
+        return {
+            "status": "failed",
+            "error" : str(e)
+        }

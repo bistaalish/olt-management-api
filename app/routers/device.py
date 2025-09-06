@@ -166,3 +166,44 @@ def checkOpticalPower(id,request:schemas.OpticalPowerRequest,db: Session = Depen
     if DeviceOutput.reseller_id == UserInfo.reseller_id:
         return device.resetONU(id,data,db)
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+@router.put("/{id}/onu/modify",status_code=status.HTTP_202_ACCEPTED)
+def modifyONU(id,request:schemas.ONUModify,db: Session = Depends(get_db),get_current_user:schemas.Reseller = Depends(role_required("Admin","Support","Technicians"))):
+    DeviceOutput = device.getDevice(id,db)
+    UserInfo = db.query(models.User).filter(models.User.email == get_current_user.email).first()
+    if get_current_user.roles == "Admin" or get_current_user.roles == "Support":
+        types = [
+            bool(getattr(request, "Description", None)),
+            bool(getattr(request, "SN", None)),
+            bool(getattr(request, "service_id", None))
+        ]
+        print(request)
+        if types.count(True) > 1:
+            raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only one type of modification is allowed at a time."
+            )
+        if types[0]:
+            return device.modifyONUByDescription(id, request, db, get_current_user.email)
+        elif types[1]:
+            return device.modifyONUBySN(id, request, db, get_current_user.email)
+        elif types[2]:
+            return device.modifyONUByServiceId(id, request, db, get_current_user.email)
+    if DeviceOutput.reseller_id == UserInfo.reseller_id:
+        types = [
+            bool(getattr(request, "Description", None)),
+            bool(getattr(request, "SN", None)),
+            bool(getattr(request, "service_id", None))
+        ]
+        if types.count(True) > 1:
+            raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only one type of modification is allowed at a time."
+            )
+        if types[0]:
+            return device.modifyONUByDescription(id, request, db, get_current_user.email)
+        elif types[1]:
+            return device.modifyONUBySN(id, request, db, get_current_user.email)
+        elif types[2]:
+            return device.modifyONUByServiceId(id, request, db, get_current_user.email)
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)

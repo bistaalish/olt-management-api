@@ -270,3 +270,11 @@ class OpticalPowerResponse(BaseModel):
 
 class DeviceStatus(BaseModel):
     status: str
+
+
+class ONUModify(BaseModel):
+    FSP: str
+    ONTID: str
+    Description: Optional[str] = None
+    SN: Optional[str] = None
+    service_id: Optional[int] = None
