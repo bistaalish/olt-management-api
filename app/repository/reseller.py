@@ -22,7 +22,7 @@ def createReseller(data:dict,db:Session):
     reseller = db.query(models.Reseller).filter(models.Reseller.name == data['name']).first()
     if reseller:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Reseller with this name already exists")
-    newReseller = models.Reseller(name=data['name'],email=data['email'],phone=data['phone'])
+    newReseller = models.Reseller(name=data['name'],Descriptions=data['Descriptions'])
     db.add(newReseller)
     db.commit()
     db.refresh(newReseller)
@@ -34,9 +34,8 @@ def create(request: schemas.Reseller,db: Session):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Reseller with this name already exists")
     newReseller = models.Reseller(
         name=request.name,
-        Location=request.Location,
-        Descriptions=request.Descriptions,
-        phone=request.phone)
+        Descriptions=request.Descriptions
+        )
     db.add(newReseller)
     db.commit()
     db.refresh(newReseller)
@@ -64,9 +63,7 @@ def updateReseller(reseller_id: int, request: schemas.Reseller, db: Session):
     if not reseller:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Reseller with id {reseller_id} not found")
     reseller.name = request.name
-    reseller.Location = request.Location
     reseller.Descriptions = request.Descriptions
-    reseller.phone = request.phone
     db.commit()
     db.refresh(reseller)
     return reseller

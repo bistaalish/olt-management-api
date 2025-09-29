@@ -26,15 +26,11 @@ class User(UserBase):
 
 class ResellerBase(BaseModel):
     name: str
-    Location: str
     Descriptions: str
-    phone: str
 
 class Reseller(ResellerBase):
     name: str
-    Location: str
     Descriptions: str
-    phone: str
     users: List[User] = []
 
 class ShowResellerUsers(BaseModel):
@@ -57,8 +53,6 @@ class ShowDeviceReseller(BaseModel):
 class ShowReseller(BaseModel):
     id: int
     name: str
-    phone: str
-    Location: str
     Descriptions: str
     users: List[ShowResellerUsers]
     devices: List[ShowDeviceReseller]
