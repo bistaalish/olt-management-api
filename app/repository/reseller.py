@@ -7,15 +7,11 @@ from ..hashing import Hash
 
 def getAll(db: Session):
     resellers = db.query(models.Reseller).all()
-    if not resellers:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No resellers found")
     return resellers
 
 def getResellerMe(reseller_id:int,db: Session):
     print(reseller_id)
     reseller = db.query(models.Reseller).filter(models.Reseller.id == reseller_id).first()
-    if not reseller:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Reseller with id {reseller_id} not found")
     return reseller
 
 def createReseller(data:dict,db:Session):

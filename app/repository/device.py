@@ -8,8 +8,6 @@ from ..utils import discord
 
 def getAll(db:Session):
     devices = db.query(models.Device).all()
-    if not devices:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No devices found")
     return devices
 
 def getDeviceByResellerId(db:Session,id:int):
@@ -17,8 +15,6 @@ def getDeviceByResellerId(db:Session,id:int):
         devices = db.query(models.Device).all()
     else:
         devices = db.query(models.Device).filter(models.Device.reseller_id == id).all()
-    if not devices:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No devices found")
     return devices
 
 
@@ -26,7 +22,7 @@ def create(request: schemas.Device, db: Session):
     device = db.query(models.Device).filter(models.Device.ip == request.ip).first()
     if device:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Device with this IP already exists")
-    newDevice = models.Device(name=request.name,vendor=request.vendor,model=request.model,type=request.type,ip=request.ip,username=request.username,password=request.password,SNMP_RO=request.SNMP_RO,reseller_id=request.reseller_id,Ctype=request.Ctype,discordWebhook=request.discordWebhook)
+    newDevice = models.Device(name=request.name,ip=request.ip,username=request.username,password=request.password,SNMP_RO=request.SNMP_RO,reseller_id=request.reseller_id,discordWebhook=request.discordWebhook)
     db.add(newDevice)
     db.commit()
     db.refresh(newDevice)
@@ -50,9 +46,6 @@ def updateDevice(device_id: int, request: schemas.Device, db: Session):
     if not device:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Device with id {device_id} not found")
     device.name = request.name
-    device.vendor = request.vendor
-    device.model = request.model
-    device.type = request.type
     device.ip = request.ip
     device.username = request.username
     device.password = request.password

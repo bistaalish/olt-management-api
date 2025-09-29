@@ -35,18 +35,14 @@ class Device(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255))
     discordWebhook = Column(String(255))
-    vendor = Column(String(255))
-    model = Column(String(255))
-    type = Column(String(255))
     ip = Column(String(255), unique=True)
-    Ctype = Column(String(255))
     username = Column(String(255))
     password = Column(String(255))
     SNMP_RO = Column(String(255))
     reseller_id = Column(Integer, ForeignKey('resellers.id'))
     reseller = relationship("Reseller", back_populates="devices")
     serviceprofiles = relationship("ServiceProfile", back_populates="device")
-#    discordWebhook = Column(String(255))
+    discordWebhook = Column(String(255))
     
 class ServiceProfile(Base):
     __tablename__ = "services"
@@ -61,6 +57,7 @@ class ServiceProfile(Base):
     acs = Column(Boolean)
     acs_gemport = Column(String(255))
     acs_vlan = Column(String(255))
+    acsprofile_id = Column(String(255))
     device = relationship("Device", back_populates="serviceprofiles")
 
 class ONUDetails(Base):

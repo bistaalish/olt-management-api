@@ -86,9 +86,8 @@ class Device(BaseModel):
 class ShowDevice(BaseModel):
     id: int
     name: str
-    vendor: str
-    model: str
-    type: str
+    ip: str
+
 
 
 class Login(BaseModel):
@@ -106,12 +105,8 @@ class TokenData(BaseModel):
 
 class DeviceBase(BaseModel):
     name: str
-    vendor: str
-    model: str
-    type: str
     ip: str
     username: str
-    Ctype : str
     password: str
     reseller_id: int
     SNMP_RO: Optional[str] = None
@@ -121,9 +116,6 @@ class DeviceBase(BaseModel):
 
 class Device(BaseModel):
     name: str
-    vendor: str
-    model: str
-    type: str
     ip: str
     username: str
     password: str
@@ -147,6 +139,7 @@ class ServiceProfile(BaseModel):
     acs: Optional[bool]  = False
     acs_gemport: Optional[str] = None
     acs_vlan: Optional[str] = None
+    acsprofile_id : Optional[str] = None
 
 class ShowServiceProfile(BaseModel):
     id: int
@@ -156,9 +149,10 @@ class ShowServiceProfile(BaseModel):
     gemport: str
     vlan: str
     device: DeviceService
-    acs: bool
-    acs_gemport: str
-    acs_vlan: str
+    acs: Optional[bool]  = False
+    acs_gemport: Optional[str] = None
+    acs_vlan: Optional[str] = None
+    acsprofile_id : Optional[str] = None
 
 class DeviceService(BaseModel):
     id : int
@@ -236,8 +230,6 @@ class DashboardDevice(BaseModel):
     id: int
     ip: str
     name: str
-    vendor: str
-    model: str
     serviceprofiles: List[DashBoardService]
 
 class ONUOutput(BaseModel):
