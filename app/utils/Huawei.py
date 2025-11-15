@@ -251,17 +251,17 @@ def deleteONU(tn,data):
         }
 def addServicePort(tn,data,ontid):
     AddServicePortCMD = "service-port vlan " + data['vlan'] + " gpon " + data['FSP'] + " ont " + ontid + " gemport " + data['gemport'] + " multi-service user-vlan " + data['vlan'] + " tag-transform translate\n\n\n"
+    quitCMD = "quit \n"
+    tn.write(b"\n")
+    tn.write(quitCMD.encode('ascii'))
+    tn.write(AddServicePortCMD.encode('ascii'))
+    tn.write(b'\n')
+    if data['acs'] == True:
+        ACSCommand = "service-port vlan " + data['acs_vlan'] + " gpon " + data['FSP'] + " ont " + ontid + " gemport " + data['acs_gemport'] + " multi-service user-vlan " + data['acs_vlan'] + " tag-transform translate\n\n\n"
         quitCMD = "quit \n"
         tn.write(b"\n")
-        tn.write(quitCMD.encode('ascii'))
-        tn.write(AddServicePortCMD.encode('ascii'))
+        tn.write(ACSCommand.encode('ascii'))
         tn.write(b'\n')
-        if data['acs'] == True:
-            ACSCommand = "service-port vlan " + data['acs_vlan'] + " gpon " + data['FSP'] + " ont " + ontid + " gemport " + data['acs_gemport'] + " multi-service user-vlan " + data['acs_vlan'] + " tag-transform translate\n\n\n"
-            quitCMD = "quit \n"
-            tn.write(b"\n")
-            tn.write(ACSCommand.encode('ascii'))
-            tn.write(b'\n')
 def AddONU(tn,data):
     try:
         interfaceCMD = "interface gpon " + data['interface'] + "\n"
