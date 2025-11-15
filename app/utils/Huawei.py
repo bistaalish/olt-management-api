@@ -276,6 +276,14 @@ def AddONU(tn,data):
         if match1:
             ontid = match1.group(1)
         print("ontid: ", ontid)
+        if data['acs'] == True:
+            AddTR069CMD = "ont ipconfig " + data['port'] + " " + ontid + " " + " dhcp vlan " + data['acs_vlan'] + " priority 5\n\n"
+            AddTR069CMD1 = "ont tr069-server-config " + data['port'] + " " + ontid + " profile-id 1\n\n"
+            tn.write(AddTR069CMD.encode('ascii'))
+            tn.write(b"\n")
+            tn.write(AddTR069CMD1.encode('ascii'))
+            tn.write(b"\n")
+            tn.write(b"\n")
         if data['nativevlan'] == True:
             # Add native VLAN
             NativeVLANCommand = "ont port native-vlan " + data['port'] + " " + ontid + " " + " eth 1 vlan " + data['vlan'] + " priority 0\n\n"
@@ -289,6 +297,7 @@ def AddONU(tn,data):
         tn.write(AddServicePortCMD.encode('ascii'))
         tn.write(b'\n')
         if data['acs'] == True:
+            
             ACSCommand = "service-port vlan " + data['acs_vlan'] + " gpon " + data['FSP'] + " ont " + ontid + " gemport " + data['acs_gemport'] + " multi-service user-vlan " + data['acs_vlan'] + " tag-transform translate\n\n\n"
             quitCMD = "quit \n"
             tn.write(b"\n")
