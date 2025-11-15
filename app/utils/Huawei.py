@@ -278,7 +278,7 @@ def AddONU(tn,data):
         print("ontid: ", ontid)
         if data['acs'] == True:
             AddTR069CMD = "ont ipconfig " + data['port'] + " " + ontid + " " + " dhcp vlan " + data['acs_vlan'] + " priority 5\n\n"
-            AddTR069CMD1 = "ont tr069-server-config " + data['port'] + " " + ontid + " profile-id 1\n\n"
+            AddTR069CMD1 = "ont tr069-server-config " + data['port'] + " " + ontid + " profile-id " + data['acsprofile_id'] + "\n\n"
             tn.write(AddTR069CMD.encode('ascii'))
             tn.write(b"\n")
             tn.write(AddTR069CMD1.encode('ascii'))
