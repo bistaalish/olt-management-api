@@ -190,6 +190,7 @@ def SearchBySN(sn,tn):
             "ONT-ID": r"ONT-ID\s+:\s+(\d+)",
             "SN": r"SN\s+:\s+([\w\d]+) \(([\w\d-]+)\)",
             "Description": r"Description\s+:\s+([^\r\n]+)",
+            "Last down cause": r"Last down cause\s*:\s*([A-Za-z0-9\-]+)",
             "Line Profile": r"Line profile name\s+:\s+([^\r\n]+)"
         }
         
@@ -203,6 +204,7 @@ def SearchBySN(sn,tn):
             "ONTID": extracted_data["ONT-ID"].group(1) if extracted_data["ONT-ID"] else "Not Found",
             "SN": extracted_data["SN"].group(1) if extracted_data["SN"] else "Not Found",
             "VendorSN": extracted_data["SN"].group(2) if extracted_data["SN"] else "Not Found",
+            "Lastdowncause": extracted_data["Last down cause"].group(1).strip() if extracted_data["Last down cause"] else "Not Found",
             "Description": extracted_data["Description"].group(1).strip() if extracted_data["Description"] else "Not Found",
             "LineProfile": extracted_data["Line Profile"].group(1).strip() if extracted_data["Line Profile"] else "Not Found"
         }

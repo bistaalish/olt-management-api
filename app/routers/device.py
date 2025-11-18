@@ -135,7 +135,6 @@ def addONU(id,request:schemas.AddONU,db:Session = Depends(get_db),get_current_us
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
         data["AddedBy"] = get_current_user.email
         AddONUOutput['data'] = data
-        onudetails.create(data,db)
         print("data:", AddONUOutput)
 
         return data

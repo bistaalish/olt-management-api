@@ -73,7 +73,7 @@ def findONU(id: int,db:Session):
     autofindResults = HuaweiSNMP.RunAutofind(device)
     print(autofindResults)
     if autofindResults["status"] == "failed":
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=autofindResults["message"])
+        raise HTTPException(status_code=status.HTTP_200_OK, detail=autofindResults["message"])
     return autofindResults['data']
 
 def SearchONU(id,request:schemas.ONUSearchSN,db: Session):
@@ -81,7 +81,7 @@ def SearchONU(id,request:schemas.ONUSearchSN,db: Session):
     tn = Huawei.TelnetSession(device)
     SearchOutput = Huawei.SearchBySN(request.sn.upper(),tn)
     if (SearchOutput['status'] == "failed"):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{request.sn} not Found in Provided OLT")
+        raise HTTPException(status_code=status.HTTP_200_OK, detail=f"{request.sn} not Found in Provided OLT")
     return SearchOutput["device"]
     
 def SearchONUByDesc(id:int,request,db:Session):
@@ -93,64 +93,126 @@ def SearchONUByDesc(id:int,request,db:Session):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{request.description} not Found in Provided OLT")
     return SearchOutput["device"]
 
-def deleteONU(id,request:schemas.DeleteONU,db:Session,username:str):
+def deleteONU(id: int, request: schemas.DeleteONU, db: Session, username: str):
+    # Get the device
     device = db.query(models.Device).filter(models.Device.id == id).first()
+    if not device:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Device not found")
+
+    # Prepare Telnet session
     tn = Huawei.TelnetSession(device)
+    
     Data = {
-        "FSP" : request.FSP,
+        "FSP": request.FSP,
         "ONTID": request.ONTID,
-        "SN" : request.SN,
-        "Description" : request.Description,
+        "SN": request.SN,
+        "Description": request.Description,
     }
-    print(request)
-    DeleteOutput = Huawei.deleteONU(tn,Data)
-    # RouterDetails = SearchOutput['device']
+    
+    print("Deleting from OLT:", Data)
+    DeleteOutput = Huawei.deleteONU(tn, Data)
+    
+    # Add metadata for Discord notification
     Data['AddedBy'] = username
     Data['Operation'] = "Delete"
     Data['OLT_NAME'] = device.name
-    print(DeleteOutput)
+    
+    # Handle failure
     if DeleteOutput['status'] == 'failed':
-        print(DeleteOutput['error'])
+        print("OLT deletion failed:", DeleteOutput['error'])
         raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=DeleteOutput['error'])
-    if device.discordWebhook and device.discordWebhook != "":
+    
+    # Send Discord notification if webhook exists
+    if device.discordWebhook:
         discord.sendMessage(device.discordWebhook, Data)
-    return "deleted"
+    
+    # -----------------------------
+    # Delete from local database
+    # -----------------------------
+    ont_record = db.query(models.ONT).filter(
+        models.ONT.SN == request.SN,
+        models.ONT.device_id == device.id
+    ).first()
+    
+    if ont_record:
+        db.delete(ont_record)
+        db.commit()
+        print(f"ONT {request.SN} deleted from database.")
+    else:
+        print(f"ONT {request.SN} not found in database.")
+    
+    return {"status": "deleted", "SN": request.SN}
 
-def addONU(id,request: schemas.AddONU,db:Session,username:str):
+def addONU(id: int, request: schemas.AddONU, db: Session, username: str):
+    # Get device and service
     device = db.query(models.Device).filter(models.Device.id == id).first()
+    if not device:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Device not found")
+
     service = db.query(models.ServiceProfile).filter(models.ServiceProfile.id == request.service_id).first()
+    if not service:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Service profile not found")
+
+    # Prepare data for OLT
     data = {
-        "sn" : request.SN,
-        "FSP" : request.FSP,
-        "interface" : request.interface,
-        "port" : request.port,
-        "vlan" : service.vlan,
-        "description" : request.description,
-        "gemport"  : service.gemport,
-        "serviceProfileId" : service.serviceprofile_id,
-        "lineProfileId" : service.lineprofile_id,
-        "acs" : service.acs,
-        "acs_gemport" : service.acs_gemport,
-        "acs_vlan" : service.acs_vlan,
-        "nativevlan" : request.nativevlan,
-        "acsprofile_id" : service.acsprofile_id
+        "sn": request.SN,
+        "FSP": request.FSP,
+        "interface": request.interface,
+        "port": request.port,
+        "vlan": service.vlan,
+        "description": request.description,
+        "gemport": service.gemport,
+        "serviceProfileId": service.serviceprofile_id,
+        "lineProfileId": service.lineprofile_id,
+        "acs": service.acs,
+        "acs_gemport": service.acs_gemport,
+        "acs_vlan": service.acs_vlan,
+        "nativevlan": request.nativevlan,
+        "acsprofile_id": service.acsprofile_id
     }
+
+    # Connect to OLT via Telnet
     tn = Huawei.TelnetSession(device)
-    AddOuput = Huawei.AddONU(tn,data)
-    if AddOuput['status'] == 'failed':
-        print(AddOuput['error'])
-        raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=AddOuput['error'])
-    OutputData = AddOuput['data']
+    AddOutput = Huawei.AddONU(tn, data)
+
+    if AddOutput['status'] == 'failed':
+        raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail=AddOutput['error'])
+
+    # Prepare output for Discord
+    OutputData = AddOutput['data']
     OutputData['AddedBy'] = username
     OutputData['Operation'] = "Add"
     OutputData["OLT_NAME"] = device.name
-    if device.discordWebhook and device.discordWebhook != "":
+
+    if device.discordWebhook:
         discord.sendMessage(device.discordWebhook, OutputData)
-    OutputData["device_id"] = device.id
-    OutputData["service_id"] = service.id
-    OutputData['reseller_id'] = device.reseller_id
-    AddOuput["data"] = OutputData
-    return AddOuput
+
+    # -----------------------------
+    # Insert or Update in ONT table
+    # -----------------------------
+    ont_record = db.query(models.ONT).filter(models.ONT.SN == request.SN).first()
+
+    if ont_record:
+        # Update existing record
+        ont_record.FSP = request.FSP
+        ont_record.ONTID = request.port  # or request.ONTID if you have it
+        ont_record.desc = request.description
+        ont_record.device_id = id
+    else:
+        # Create new record
+        new_ont = models.ONT(
+            FSP=request.FSP,
+            ONTID=request.port,  # or request.ONTID
+            SN=request.SN,
+            desc=request.description,
+            device_id=device.id
+        )
+        db.add(new_ont)
+
+    db.commit()  # commit insert or update
+    db.refresh(ont_record if ont_record else new_ont)
+
+    return AddOutput
 
 def CheckONUOptical(id,data,db):
     device = db.query(models.Device).filter(models.Device.id == id).first()

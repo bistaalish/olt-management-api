@@ -186,6 +186,7 @@ class ONUSearchSNOutput(BaseModel):
     SN: str
     ONTID: str
     VendorSN: str
+    Lastdowncause: str
     LineProfile: str
 
 class AddONU(BaseModel):
@@ -264,3 +265,10 @@ class ONUModify(BaseModel):
     Description: Optional[str] = None
     SN: Optional[str] = None
     service_id: Optional[int] = None
+
+class ONTBase(BaseModel):
+    FSP: str = Field(..., example="0/1/0")
+    ONTID: int = Field(..., example=0)
+    SN: str = Field(..., example="48575443A31B8151")
+    desc: str = Field(..., example="schooldada-cctv")
+    device_id: int = Field(default=2, example=2)

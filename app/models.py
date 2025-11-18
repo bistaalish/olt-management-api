@@ -42,6 +42,7 @@ class Device(Base):
     reseller_id = Column(Integer, ForeignKey('resellers.id'))
     reseller = relationship("Reseller", back_populates="devices")
     serviceprofiles = relationship("ServiceProfile", back_populates="device")
+    onts = relationship("ONT", back_populates="device")
     discordWebhook = Column(String(255))
     
 class ServiceProfile(Base):
@@ -71,3 +72,16 @@ class ONUDetails(Base):
     device_id = Column(Integer, ForeignKey('devices.id'))
     service_id = Column(Integer, ForeignKey('services.id'))
     reseller_id = Column(Integer, ForeignKey('resellers.id'))
+
+
+class ONT(Base):
+    __tablename__ = "onts"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+
+    FSP = Column(String(20), nullable=False)
+    ONTID = Column(Integer, nullable=False)
+    SN = Column(String(50), nullable=False, unique=True)
+    desc = Column(String(255), nullable=True)
+    device_id = Column(Integer, ForeignKey("devices.id"), nullable=False, default=2)
+    device = relationship("Device", back_populates="onts")
