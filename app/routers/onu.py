@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status, Response, HTTPException, Query
-from typing import List
+from typing import List, Optional
 from .. import schemas, models,oauth2
 from ..database import SessionLocal, get_db
 from sqlalchemy.orm import Session
@@ -21,15 +21,26 @@ router = APIRouter(
 
 # # GET /onu/{onu_id}
 
+
 @router.get("/search", response_model=List[schemas.ONTBase])
 def search_onu(
-    query: str = Query(..., description="Search by SN or description"),
+    query: Optional[str] = Query(None, description="Search by SN or description"),
+    owner: Optional[str] = Query(None, description="Filter by owner: personal or gov"),
     db: Session = Depends(get_db)
 ):
-    # Search by SN or description using LIKE
-    results = db.query(ONT).filter(
-        (ONT.SN.like(f"%{query}%")) | (ONT.desc.like(f"%{query}%"))
-    ).all()
+    # Start with the base query
+    q = db.query(models.ONT)
 
-    # Option 1: return empty list if nothing found (recommended)
+    # Filter by query if provided
+    if query:
+        q = q.filter(
+            (models.ONT.SN.like(f"%{query}%")) | 
+            (models.ONT.desc.like(f"%{query}%"))
+        )
+
+    # Filter by owner if provided
+    if owner:
+        q = q.filter(models.ONT.owner == owner)
+
+    results = q.all()
     return results

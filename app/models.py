@@ -83,5 +83,6 @@ class ONT(Base):
     ONTID = Column(Integer, nullable=False)
     SN = Column(String(50), nullable=False, unique=True)
     desc = Column(String(255), nullable=True)
+    owner = Column(String(100), nullable=True)
     device_id = Column(Integer, ForeignKey("devices.id"), nullable=False, default=2)
     device = relationship("Device", back_populates="onts")
