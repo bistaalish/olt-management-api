@@ -25,7 +25,7 @@ router = APIRouter(
 @router.get("/search", response_model=List[schemas.ONTBase])
 def search_onu(
     query: Optional[str] = Query(None, description="Search by SN or description"),
-    owner: Optional[str] = Query(None, description="Filter by owner: personal or gov"),
+    device_id: Optional[int] = Query(None, description="Filter by Device id"),
     db: Session = Depends(get_db)
 ):
     # Start with the base query
@@ -39,8 +39,8 @@ def search_onu(
         )
 
     # Filter by owner if provided
-    if owner:
-        q = q.filter(models.ONT.owner == owner)
+    if device_id:
+        q = q.filter(models.ONT.device_id == device_id)
 
     results = q.all()
     return results
